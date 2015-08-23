@@ -3,6 +3,8 @@ from brokers.models import *
 from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from brokers import utils
+from django.core.mail import send_mail
+import random
 
 # Create your views here.
 def registration(request):
@@ -23,21 +25,79 @@ def registration(request):
                   contact_number,cont_error=utils.verify_mobile(contact_number)
                   email,email_error=utils.verify_email(email)
                   pwd,pwd_error=utils.verify_passwords(password,crpassword)
-                   
-                  if pincode!='-1'and contact_number!='-1'and email!='-1'and pwd!='-1':
+                  error=[]
+                  if fname=='':
+                       error.append("first name is required")
+                  if lname=='':
+                       error.append("last name is required")
+                  if adddress=='':
+                       error.append("address  is required")
+                  if city=='':
+                       error.append("city is required")
+                  if  state=='':
+                       error.append("state is required")
+                  if companyname=='':
+                       error.append("company name is required")                         
+                  if pincode=='-1':
+                       pincode=''
+                       error.append(pincode_error)
+                  if contact_number=='-1':
+                       contact_number=''
+                       error.append(cont_error)
+                  if email=='-1':
+                       email=''
+                       error.append(email_error)          
+                  if pwd=='-1':
+                       pwd=''
+                       error.append(pwd_error) 
+                  if not error:
                      obj=Broker_info(fname=fname,lname=lname,address=address,city=city,
                      state=state,country=country,pincode=pincode,contact_number=long(contact_number),email=email,password=password,companyname=companyname)
                      obj.save()
+                     String = utils.generate_string(size= 10)
+                     number=  randrange (10000,10000000 ,3)
+                     temp=Broker_info.objects.get(email=email)
+                     obj=verification(string=String,number=number,broker_id=temp)
+                     obj.save();
+
+                     send_mail('Frieghttrackers', 'Actvate your account by clicking on link  here some link will come', 'from@example.com',
+                     ['to@example.com'], fail_silently=False)
+
                      temp=Broker_info.objects.get(email=email)
                      request.session["uid"] =temp.id
-                     return HttpResponseRedirect('/profile/')
+                     return HttpResponseRedirect('/home/')
                      
                   else:
+
                      return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,
-                     "state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"email":email,"password":password,"pincode_error":pincode_error,"cont_error":cont_error,"email_error":email_error,"pwd_error":pwd_error})    
+                     "state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"email":email,"password":password,"error":error})    
                 
     else:   
             return render(request,"registrationform.html")
 
 def profile(request):
-            return HttpResponse("hello")
+          s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+          dic=s.get_decoded()
+          b=user.objects.get(id=dic["uid"])
+          if b.email_status="True" and  b.mobile_status="True":
+               email=b.email
+               render(request,"profile.html",{"email":email})      
+          else:
+               HttpResponseRedirect("please verify your account")
+
+def home(request):  
+           HttpResponse("HOMEPAGE")
+
+
+def Addtruck(request):
+          s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+          dic=s.get_decoded()
+          b=user.objects.get(id=dic["uid"])
+          if b.email_status="True" and  b.mobile_status="True":
+               email=b.email
+               render(request,"Addtruck.html",{"email":email})      
+          else:
+               HttpResponseRedirect("please verify your account")
+          
+
+            

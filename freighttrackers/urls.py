@@ -21,4 +21,5 @@ urlpatterns = [
  #   url(r'^admin/', include(admin.site.urls)),
     url(r'^registration/',registration),
     url(r'^profile/',profile),
+    url(r'^home/',home),
 ]

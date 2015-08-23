@@ -15,8 +15,8 @@ class  Broker_info(models.Model):
     password = models.CharField(max_length=50,blank=False)
     companyname=models.CharField(max_length=30,blank=False)
     rating=models.IntegerField(default=0,blank=False)
-    email_status=models.BooleanField(default=False,blank=False)
-    mobile_status=models.BooleanField(default=False,blank=False)
+    email_status=models.BooleanField(default=True,blank=False)
+    mobile_status=models.BooleanField(default=True,blank=False)
 
 
 class verification(models.Model):
