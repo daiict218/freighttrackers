@@ -1,0 +1,50 @@
+<html>
+<body>
+
+<form action="" method="POST">
+	{% csrf_token %}	
+ First name:<br>
+<input type="text" name="fname" required="True" value={{fname}} >
+<br>
+Last name:<br>
+<input type="text" name="lname" required="True" value={{lname}} >
+<br>
+address:<br>
+<input type="text" name="address" required="True" value={{address}} >
+<br>
+city:<br>
+<input type="text" name="city" required="True" value={{city}} >
+<br>
+state:<br>
+<input type="text" name="state" required="True" value={{state}} >
+<br>
+country:<br>
+<input type="text" name="country"  required="True" value={{country}} >
+<br>
+pincode:<br>
+<input type="text" name="pincode" required="True" value={{pincode}} >
+<br>
+email:<br>
+<input type="text" name="email" required="True" value={{email}} >
+<br>
+password:<br>
+<input type="text" name="password" value="" required="True">
+<br>
+reenter password:<br>
+<input type="text" name="crpassword" value="" required="True">
+<br>
+contact:<br>
+<input type="text" name="contact_number" required="True" value={{contact_number}} >
+<br>
+company name:<br>
+<input type="text" name="company" required="True" value={{company}} >
+<input type="submit" value="SAVE">
+</form>
+{{pincode_error}}
+{{cont_error}}
+{{email_error}}
+{{pwd_error}}
+
+
+</body>
+</html>

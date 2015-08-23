@@ -1,0 +1,98 @@
+<html>
+<body>
+<p>your userid id{{fname}}</p>
+ <a href="/logout/">Logout</a>
+ <a href="/addtruck/">addtruck</a> 
+
+  <head>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+            <script src="https://maps.googleapis.com/maps/api/js"></script>
+        <script>
+
+  // In the following example, markers appear when the user clicks on the map.
+  // The markers are stored in an array.
+  // The user can then click an option to hide, show or delete the markers.
+  var map;
+  var markers = [];
+
+  function initialize() {
+    var haightAshbury = new google.maps.LatLng(parseFloat({{lat}}),parseFloat({{lon}}));
+    var mapOptions = {
+      zoom: 12,
+      center: haightAshbury,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+    
+    google.maps.event.addListener(map, 'click', function(event) {
+      addMarker(event.latLng);
+    });
+
+    
+    addMarker(haightAshbury);
+  }
+
+
+  function addMarker(location) {
+   clearMarkers();
+   markers = [];
+   var marker = new google.maps.Marker({
+    position: location,
+    map: map
+  });
+   markers.push(marker);
+   document.getElementById("lat").value = location.lat();
+   document.getElementById("lon").value = location.lng();
+
+
+   var infowindow = new google.maps.InfoWindow({
+    content: "<b>{{fname}}</b>" 
+  });
+   infowindow.open(map,marker);
+ }
+
+
+ function setAllMap(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+
+function clearMarkers() {
+  setAllMap(null);
+}
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+  /*var mygetrequest=new ajaxRequest()
+  mygetrequest.onreadystatechange=function(){
+   if (mygetrequest.readyState==4){
+    if (mygetrequest.status==200 || window.location.href.indexOf("http")==-1){
+     document.getElementById("result").innerHTML=mygetrequest.responseText
+    }
+    else{
+     alert("An error has occured making the request")
+    }
+   }
+  }
+  var f1=encodeURIComponent(document.getElementById("demo").value)
+  var f2=encodeURIComponent(document.getElementById("demo1").value)
+  mygetrequest.open("GET", "?demo="+f1+"&demo1="+f2, true)
+  mygetrequest.send(null)
+  */
+</script>
+
+  </head>
+           <body>
+        
+            <!-- /. ROW  -->
+            <label>Latitude: </label>
+            <input type="text" class="form-control" name="lat" id="lat">
+             <label>Longitude: </label>
+            <input type="text" class="form-control" name="lon"  id="lon">
+            <div id="map-canvas" style="width:1100px;height:700px;align:center;"></div>
+          </body>  
+ </html>
