@@ -7,7 +7,10 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.8/topics/settings/
 
 For the full list of settings and their values, see
+
 https://docs.djangoproject.com/en/1.8/ref/settings/
+this is to check if everything works on github
+
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
