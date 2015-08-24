@@ -1,8 +1,12 @@
+ {% load staticfiles %}
+<img src="{% static "img/index.jpeg" %}" alt="My image"/> 
+<link rel='stylesheet' type='text/css' href="{% static "css/default.css" %}"  />
 <html>
 <body>
-<p>your userid id{{fname}}</p>
+<p>you are {{email}}</p>
  <a href="/logout/">Logout</a>
- <a href="/addtruck/">addtruck</a> 
+ <a href="/addtruck/">addtruck</a>
+ <a href="/adddriver/">adddriver</a>
 
   <head>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
@@ -84,7 +88,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
   mygetrequest.send(null)
   */
 </script>
-
+  
   </head>
            <body>
         

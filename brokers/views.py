@@ -81,7 +81,7 @@ def registration(request):
             return render(request,"registrationform.html")
 
 def profile(request):
-        try:
+        try:    
           s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
           dic=s.get_decoded()
           b=Broker_info.objects.get(id=dic["uid"])
@@ -89,7 +89,9 @@ def profile(request):
           print b.mobile_status
           if b.email_status and  b.mobile_status:
                email=b.email
-               return  render(request,"profile.html",{"email":email})      
+               lat=24.585370
+               lon=73.712275
+               return  render(request,"profile.html",{"email":email,"lat":lat,"lon":lon})      
           else:
               return  HttpResponse("please verify your account")
         except:
@@ -130,4 +132,12 @@ def logout(request):
         return HttpResponse("There might be some error whith logout")               
           
 
-            
+def Adddriver(request):
+          s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+          dic=s.get_decoded()
+          b=Broker_info.objects.get(id=dic["uid"])
+          if b.email_status=="TRUE" and  b.mobile_status=="TRUE":
+               email=b.email
+               render(request,"Addtruck.html",{"email":email})      
+          else:
+               HttpResponseRedirect("please verify your account")            

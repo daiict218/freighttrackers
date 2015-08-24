@@ -16,11 +16,18 @@ Including another URLconf
 from django.conf.urls import include, url
 #from django.contrib import admin
 from brokers.views import *
+from django.conf.urls import patterns, include, url
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+#from myweblab import settings
 
 urlpatterns = [
  #   url(r'^admin/', include(admin.site.urls)),
-    url(r'^registration/',registration),
-    url(r'^profile/',profile),
-    url(r'^home/',home),
-    url(r'^logout/',logout),
+    url(r'^registration/$',registration),
+    url(r'^profile/$',profile),
+    url(r'^home/$',home),
+    url(r'^logout/$',logout),
+    url(r'^addtruck/$',Addtruck),
+    url(r'^adddriver/$',Adddriver),
 ]
