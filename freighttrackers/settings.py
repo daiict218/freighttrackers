@@ -61,7 +61,7 @@ ROOT_URLCONF = 'freighttrackers.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/home/nikhil/freighttrackers/brokerapp/templates'],
+        'DIRS': ['/home/ajay/freighttrackers/freighttrackers/brokerapp/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,8 +87,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'NAME': 'freighttrackers',                      # Or path to database file if using sqlite3.
-        'USER': 'nikhiljain',                      # Not used with sqlite3.
-        'PASSWORD': '123',                  # Not used with sqlite3.
+        'USER': 'postgres',                      # Not used with sqlite3.
+        'PASSWORD': '12345678',                  # Not used with sqlite3.
         'HOST': '127.0.0.1',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '5432', 
     }
