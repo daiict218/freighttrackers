@@ -61,7 +61,7 @@ ROOT_URLCONF = 'freighttrackers.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/home/nikhil/freighttrackers/brokerapp/templates'],
+        'DIRS': ['/home/ajay/freighttrackers/freighttrackers/brokerapp/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

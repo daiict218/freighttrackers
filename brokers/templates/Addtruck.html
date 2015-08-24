@@ -1,0 +1,53 @@
+<html>
+<body>
+  <p>your d is {{email}}</p>
+<form action="" method="POST">
+	{% csrf_token %}	
+ State:<br>
+<input type="text" name="state" required="True" value={{state}} >
+<br>
+Rto:<br>
+<input type="text" name="rto" required="True" value={{rto}} >
+<br>
+numberone:<br>
+<input type="text" name="numberone" required="True" value={{numberone}} >
+<br>
+numbertwo:<br>
+<input type="text" name="numbertwo" required="True" value={{numbertwo}} >
+<br>
+<br>
+truck type:<br>
+<input type="text" name="trucktype" required="True" value={{trucktype}} >
+<br>
+truck tyre:<br>
+<input type="text" name="trucktyre" required="True" value={{trucktyre}} >
+<br>
+truck model:<br>
+<input type="text" name="truckmodel"  required="True" value={{truckmodel}} >
+<br>
+Capacity in tons:<br>
+<input type="text" name="capacity" required="True" value={{capacity}} >
+<br>
+body length:<br>
+<input type="text" name="bodylength" required="True" value={{bodylength}} >
+<br>
+body width:<br>
+<input type="text" name="bodywidth"  required="True" value={{bodywidth}}>
+<br>
+Preferable item:<br>
+<input type="text" name="prefitem"  required="True" value={{prefitem}}>
+<br>
+RC BOOK:<br>
+<input type="text" name="rcbook" required="True" value={{rcbook}} >
+<br>
+PUC BOOK:<br>
+<input type="text" name="pucbook" required="True" value={{pucbook}} >
+<br>
+INSURANCE BOOK:<br>
+<input type="text" name="insbook" required="True" value={{insbook}} >
+<br>
+<input type="submit" value="SAVE">
+</form>
+
+</body>
+</html>

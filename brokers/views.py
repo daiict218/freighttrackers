@@ -98,14 +98,22 @@ def profile(request):
               return HttpResponseRedirect('/home/')
 
 def Addtruck(request):
-          s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
-          dic=s.get_decoded()
-          b=Broker_info.objects.get(id=dic["uid"])
-          if b.email_status=="TRUE" and  b.mobile_status=="TRUE":
-               email=b.email
-               render(request,"Addtruck.html",{"email":email})      
-          else:
-               HttpResponseRedirect("please verify your account")
+    if request.method=='GET':
+        try:
+            s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+        except:
+            return HttpResponseRedirect('/home/')
+
+        dic=s.get_decoded()
+        b=Broker_info.objects.get(id=dic["uid"])
+        if b.email_status and  b.mobile_status:
+                email=b.email
+                return  render(request,"Addtruck.html",{"email":email})      
+                   
+        else:
+          return  HttpResponse("please verify your account")
+    #else:
+
 
 def  home(request):
       
@@ -133,11 +141,78 @@ def logout(request):
           
 
 def Adddriver(request):
+    if request.method=="GET":
+        try:
           s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
-          dic=s.get_decoded()
-          b=Broker_info.objects.get(id=dic["uid"])
-          if b.email_status=="TRUE" and  b.mobile_status=="TRUE":
-               email=b.email
-               render(request,"Addtruck.html",{"email":email})      
-          else:
-               HttpResponseRedirect("please verify your account")            
+        except:
+            return HttpResponseRedirect('/home/')
+        dic=s.get_decoded()
+        b=Broker_info.objects.get(id=dic["uid"])
+        if b.email_status and  b.mobile_status:
+           email=b.email
+           return render(request,"Adddriver.html",{"email":email})      
+        else:
+           return HttpResponse("please verify your account") 
+
+    # else:
+    #     fname=request.POST['fname']
+    #     lname=request.POST['lname']
+    #     address=request.POST['address']
+    #     city=request.POST['city']
+    #     state=request.POST['state']
+    #     country=request.POST['country']
+    #     pincode=request.POST['pincode']
+    #     contact_number=long(request.POST['contact_number'])
+    #     pincode,pincode_error=utils.verify_pincode(pincode)
+    #     contact_number,cont_error=utils.verify_mobile(contact_number)
+    #     error=[]
+    #     if fname=='':
+    #         error.append("first name is required")
+    #     if lname=='':
+    #         error.append("last name is required")
+    #     if address=='':
+    #         error.append("address  is required")
+    #     if city=='':
+    #         error.append("city is required")
+    #     if  state=='':
+    #         error.append("state is required")
+    #     if companyname=='':
+    #         error.append("company name is required")                         
+    #     if pincode=='-1':
+    #         pincode=''
+    #         error.append(pincode_error)
+    #     if contact_number=='-1':
+    #         contact_number=''
+    #         error.append(cont_error)
+    #     if email=='-1':
+    #         email=''
+    #         error.append(email_error)          
+    #     if pwd=='-1':
+    #         pwd=''
+    #         error.append(pwd_error) 
+    #     if not error:
+    #         var=Broker_info.objects.filter(email=email)
+    #         if not var:
+    #                     obj=Broker_info(fname=fname,lname=lname,address=address,city=city,
+    #                     state=state,country=country,pincode=pincode,contact_number=long(contact_number),email=email,password=password,companyname=companyname)
+    #                     obj.save()
+    #                     String = utils.generate_string(size= 10)
+    #                     number= random.randrange (10000,10000000 ,3)
+    #                     temp=Broker_info.objects.get(email=email)
+    #                     obj=verification(string=String,number=number,broker_id=temp)
+    #                     obj.save();
+
+    #                    # send_mail('Frieghttrackers', 'Actvate your account by clicking on link  here some link will come', 'from@example.com',
+    #                    #['to@example.com'], fail_silently=False)
+
+    #                     temp=Broker_info.objects.get(email=email)
+    #                     request.session["uid"] =temp.id
+    #                     return HttpResponseRedirect('/home/')
+    #                 else:
+    #                     return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,
+    #                     "state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"email":email,"companyname":companyname,"error":error,"emailerror":"Email Already exist"})  
+    #               else:
+
+    #                  return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,"state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"companyname":companyname,"email":email,"password":password,"error":error})
+
+                                    

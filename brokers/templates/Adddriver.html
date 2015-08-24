@@ -1,0 +1,45 @@
+<html>
+<body>
+<p> your id is  {{email}} </p>
+<form action="" method="POST">
+	{% csrf_token %}	
+ First name:<br>
+<input type="text" name="fname" required="True" value={{fname}} >
+<br>
+Last name:<br>
+<input type="text" name="lname" required="True" value={{lname}} >
+<br>
+address:<br>
+<input type="text" name="address" required="True" value={{address}} >
+<br>
+city:<br>
+<input type="text" name="city" required="True" value={{city}} >
+<br>
+state:<br>
+<input type="text" name="state" required="True" value={{state}} >
+<br>
+country:<br>
+<input type="text" name="country"  required="True" value={{country}} >
+<br>
+pincode:<br>
+<input type="text" name="pincode" required="True" value={{pincode}} >
+<br>
+contact:<br>
+<input type="text" name="contact_number" required="True" value={{contact_number}} >
+<br>
+age:<br>
+<input type="text" name="age" required="True" value={{age}} >
+<br>
+license number:<br>
+<input type="text" name="licensenumber" required="True" value={{licensenumber}} >
+<br>
+<input type="submit" value="SAVE">
+</form>
+{%for item in error%}
+  <p>{{item}}</p>
+{%endfor%}
+
+{{emailerror}}
+
+</body>
+</html>
