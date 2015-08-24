@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^registration/',registration),
     url(r'^profile/',profile),
     url(r'^home/',home),
+    url(r'^logout/',logout),
 ]

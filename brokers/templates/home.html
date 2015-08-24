@@ -1,0 +1,15 @@
+<html>
+<body>
+<form action="" method="POST">
+	{% csrf_token %}
+email:<br>
+<input type="text" name="email">
+<br>
+password:<br>
+<input type="password" name="password">
+<input type="submit" value="LOGIN">
+</form>
+<p><a href="/registration/">Register</a></p>
+<p>{{error}}</p>
+</body>
+</html>

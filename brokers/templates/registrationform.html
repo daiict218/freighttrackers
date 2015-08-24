@@ -37,13 +37,15 @@ contact:<br>
 <input type="text" name="contact_number" required="True" value={{contact_number}} >
 <br>
 company name:<br>
-<input type="text" name="company" required="True" value={{company}} >
+<input type="text" name="company" required="True" value={{companyname}} >
 <br>
 <input type="submit" value="SAVE">
 </form>
 {%for item in error%}
   <p>{{item}}</p>
 {%endfor%}
+
+{{emailerror}}
 
 </body>
 </html>
