@@ -16,7 +16,7 @@ def home(request):
                   lname=request.POST['lname']
                   #address=request.POST['address']
                   #city=request.POST['city']
-                  #state=request.POST['state']
+                  state=request.POST['state']
                   #country=request.POST['country']
                   pincode=request.POST['pincode']
                   contact_number=request.POST['contact_number']
@@ -38,8 +38,8 @@ def home(request):
                   #      error.append("address  is required")
                   # if city=='':
                   #      error.append("city is required")
-                  # if  state=='':
-                  #      error.append("state is required")
+                  if  state=='':
+                        error.append("state is required")
                   if companyname=='':
                        error.append("company name is required")                         
                   if pincode=='-1':
@@ -47,24 +47,25 @@ def home(request):
                        error.append(pincode_error)
                   else:
                        print pincode
-                       response1 = urllib2.urlopen('https://www.WhizAPI.com/api/v2/util/ui/in/indian-city-by-postal-code?AppKey=nwbht9wqibmyynjlv3xezyer&pin=314022')
+                       pincode=int(pincode)
+                       response1 = urllib2.urlopen('https://www.WhizAPI.com/api/v2/util/ui/in/indian-city-by-postal-code?AppKey=nwbht9wqibmyynjlv3xezyer&pin=%d' %pincode)
                        try:
                          temp=json.load(response1)
-                         print temp
+                         #print temp
                          list_city=temp["Data"]
-                         print " /n"
+                         #print " /n"
                          print list_city
                          dic=list_city[0]
-                         print dic
+                         #print dic
                         
 
                          city=dic['City']
-                         print city
+                         #print city
                          country=dic['Country']
-                         print country
+                         #print country
                          address=''
 
-                         state=''
+                         #state=''
                          
                        except: 
                          error.append("Enter valid pincode")
@@ -125,8 +126,24 @@ def profile(request):
           b=Broker_info.objects.get(id=dic["uid"])
           if b.email_status and  b.mobile_status:
                email=b.email
-               lat=24.585370
-               lon=73.712275
+               address=b.address
+               city=b.city
+               state=b.state
+               country=b.country
+               print 'https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state)
+               
+               try:
+                  response1 = urllib2.urlopen('https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state))
+                  temp=json.load(response1)
+                  print temp
+                  dic=temp[0]
+                  lat=dic['lat']
+                  lon=dic['lng']          
+                         
+               except: 
+                      lat=28.613939
+                      lon=77.209021
+                        
                return  render(request,"profile.html",{"email":email,"lat":lat,"lon":lon})      
           else:
               return  HttpResponse("please verify your account")
@@ -196,4 +213,16 @@ def managedriver(request):
     
     resultset=driver_info.objects.filter(broker=dic["uid"])
     driver_set=list(resultset)
-    return render(request,"managedriver.html",{"driver_set":driver_set})                                
+    return render(request,"managedriver.html",{"driver_set":driver_set}) 
+
+
+def managetruck(request):                  
+    try:
+          s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+    except:
+          return HttpResponseRedirect('/home/')
+    dic=s.get_decoded()
+    email=Broker_info.objects.get(id=dic["uid"]).email
+    lat=28.613939
+    lon=77.209021
+    return render(request,"managetruck.html",{"email":email,"lat":lat,"lon":lon})                                    

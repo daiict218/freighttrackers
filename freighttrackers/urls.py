@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^addtruck/$',Addtruck),
     url(r'^adddriver/$',Adddriver),
     url(r'^managedriver/$',managedriver),
+    url(r'^managetruck/$',managetruck),
 ]
