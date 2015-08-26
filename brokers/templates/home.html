@@ -1,15 +1,169 @@
-<html>
-<body>
-<form action="" method="POST">
-	{% csrf_token %}
-email:<br>
-<input type="text" name="email">
-<br>
-password:<br>
-<input type="password" name="password">
-<input type="submit" value="LOGIN">
-</form>
-<p><a href="/registration/">Register</a></p>
-<p>{{error}}</p>
-</body>
-</html>
+<!DOCTYPE html>
+<html lang="en">
+{% load staticfiles %}
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}"  />
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.min.css"%}"/>
+    <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
+    <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
+    <script src="{% static "Bootstrap/js/bootstrap.min.js"%}"></script>
+
+  </head>
+  <body>
+  	<div class="jumbotron">
+       <div class="container">
+       	  <nav class="navbar navbar-inverse navbar-fixed-top">
+  			<div class="container-fluid">
+    			<div class="navbar-header">
+      				<a class="navbar-brand" >Freighttrackers</a>
+    			</div>
+    			<div>
+      				
+      				<ul class="nav navbar-nav navbar-right">
+        				 <li><button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#signupModal" href="#signupModel"><span class="glyphicon glyphicon-user"></span> Sign Up</button></li>
+
+        				<li><button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#loginModal" name="login" value="True"><span class="glyphicon glyphicon-log-in"></span> Log in</button></li>
+     				 </ul>
+    			</div>
+  			</div>
+		  </nav>
+       </div>		
+    </div>
+    <div class="container">
+ 
+  <!-- Trigger the modal with a button -->
+ 
+
+  <!-- sign up Modal -->
+  <div class="modal fade" id="signupModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+        	<h1 class="text-muted">Register</h1>
+					<hr/>
+			<form role="form" class="form-horizontal" action="/home/" method="POST">
+				{% csrf_token %}
+    			<div class="form-group">
+        			<div class="col-sm-5"><label>First name</label>
+        			<input type="text" class="form-control"  name="fname"  placeholder="First Name" required value={{fname}} >
+        			</div>
+                    <div class="col-sm-5"><label>Last name</label><input type="text" class="form-control" name="lname" placeholder="Last Name" required value={{lname}}>
+                    </div>
+                </div>
+    			<div class="form-group">
+        			<label class="col-sm-5">Email</label>
+                    <div class="col-sm-10"><input type="email" class="form-control" id="inputEmail1" placeholder="Email" name="email" required value={{email}}>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-5">Password</label>
+                    <div class="col-sm-10"><input type="password" class="form-control" id="inputPassword1" required name="password" placeholder="Password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-5" >reenter password</label>
+                    <div class="col-sm-10"><input type="password" class="form-control" id="inputPassword1"  required name="crpassword" placeholder="reenter password">
+                    </div>
+                </div>
+                <div class="form-group">
+        			<label class="col-sm-5">company name</label>
+        			<div class="col-sm-10"><input type="text" class="form-control" placeholder="Company Name" required name="company" value={{companyname}}>
+        			</div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-5">Phone number</label>
+                   <div class="col-sm-10">
+                   	<input type="text" class="form-control" placeholder="contact Number" name="contact_number" required value={{contact_number}}>
+                   </div>
+               </div>
+               <div class="form-group">
+                    <label class="col-sm-5">Pin Code</label>
+                   <div class="col-sm-10">
+                   	<input type="text" class="form-control" placeholder="PinCode" name="pincode" required value={{pincode}}>
+                   </div>
+               </div>
+               <div class="form-group">
+                    <div class="col-sm-6">
+                       <button name="signup" type="submit" class="btn btn-info pull-right" value="True">Submit</button>
+                    </div>
+               </div>
+      		</form>
+      		{%for item in error%}
+      		 {{item}}
+      		 {%endfor%}
+		</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="modal fade" id="loginModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+            
+					<h1 class="text-muted">User login</h1>
+					<hr/>
+    			<form action="/home/" method="POST">
+    				{%csrf_token%}
+    				<div class="form-group">
+    					<label for="emailField">Email address</label>
+						<input type="email" class="form-control i" id="emailField" placeholder="Enter email" required name="email" value={{email}}>
+    				</div>
+
+    				<div class="form-group">
+    					<label for="passwordField">Password</label>
+						<input type="password" class="form-control " id="passwordField" placeholder="Enter password" required name="password">
+    				</div>
+
+    				<div class="checkbox">
+    					<label>
+    					<input type="checkbox" required/> Remember Me
+    					</label>
+    				</div>
+
+    				<button type="submit" class="btn btn-success" name="login" value="True">Login</button>
+    			</form>
+		</div>
+       
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>  
+  
+
+
+
+
+<div class="well">
+</div>          
+
+  </body>
+</html
+
+
+
+
+
+
+
+
+
+
+
+
+
+

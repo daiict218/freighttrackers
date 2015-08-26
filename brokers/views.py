@@ -5,46 +5,69 @@ from django.contrib.sessions.models import Session
 from brokers import utils
 from django.core.mail import send_mail
 import random
-from urllib2 import Request, urlopen, URLError
-
+import urllib2
+import json
 
 # Create your views here.
-def registration(request):
-    if request.method=='POST':
+def home(request):
+    if request.method=='POST' and 'signup' in  request.POST:
+                  print request
                   fname=request.POST['fname']
                   lname=request.POST['lname']
-                  address=request.POST['address']
-                  city=request.POST['city']
-                  state=request.POST['state']
-                  country=request.POST['country']
+                  #address=request.POST['address']
+                  #city=request.POST['city']
+                  #state=request.POST['state']
+                  #country=request.POST['country']
                   pincode=request.POST['pincode']
-                  contact_number=long(request.POST['contact_number'])
+                  contact_number=request.POST['contact_number']
                   email=request.POST['email']
                   companyname=request.POST['company']
                   password=request.POST['password']
                   crpassword=request.POST['crpassword']
-                  print password
-                  print crpassword
                   pincode,pincode_error=utils.verify_pincode(pincode)
                   contact_number,cont_error=utils.verify_mobile(contact_number)
                   email,email_error=utils.verify_email(email)
                   pwd,pwd_error=utils.verify_passwords(password,crpassword)
+                  
                   error=[]
                   if fname=='':
                        error.append("first name is required")
                   if lname=='':
                        error.append("last name is required")
-                  if address=='':
-                       error.append("address  is required")
-                  if city=='':
-                       error.append("city is required")
-                  if  state=='':
-                       error.append("state is required")
+                  # if address=='':
+                  #      error.append("address  is required")
+                  # if city=='':
+                  #      error.append("city is required")
+                  # if  state=='':
+                  #      error.append("state is required")
                   if companyname=='':
                        error.append("company name is required")                         
                   if pincode=='-1':
                        pincode=''
                        error.append(pincode_error)
+                  else:
+                       print pincode
+                       response1 = urllib2.urlopen('https://www.WhizAPI.com/api/v2/util/ui/in/indian-city-by-postal-code?AppKey=nwbht9wqibmyynjlv3xezyer&pin=314022')
+                       try:
+                         temp=json.load(response1)
+                         print temp
+                         list_city=temp["Data"]
+                         print " /n"
+                         print list_city
+                         dic=list_city[0]
+                         print dic
+                        
+
+                         city=dic['City']
+                         print city
+                         country=dic['Country']
+                         print country
+                         address=''
+
+                         state=''
+                         
+                       except: 
+                         error.append("Enter valid pincode")
                   if contact_number=='-1':
                        contact_number=''
                        error.append(cont_error)
@@ -53,7 +76,9 @@ def registration(request):
                        error.append(email_error)          
                   if pwd=='-1':
                        pwd=''
-                       error.append(pwd_error) 
+                       error.append(pwd_error)
+                  
+                      
                   if not error:
                     var=Broker_info.objects.filter(email=email)
                     if not var:
@@ -72,26 +97,29 @@ def registration(request):
                         temp=Broker_info.objects.get(email=email)
                         request.session["uid"] =temp.id
                         
-                        return HttpResponseRedirect('/home/')
+                        return HttpResponseRedirect('/profile/')
                     else:
-                        return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,
-                        "state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"email":email,"companyname":companyname,"error":error,"emailerror":"Email Already exist"})  
+                        return render(request,"home.html",{"fname":fname,"lname":lname,"pincode":pincode,"contact_number":contact_number,"email":email,"companyname":companyname,"error":error,"emailerror":"Email Already exist"})  
                   else:
 
-                     return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,"state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"companyname":companyname,"email":email,"password":password,"error":error})    
+                     return render(request,"home.html",{"fname":fname,"lname":lname,"pincode":pincode,"contact_number":contact_number,"companyname":companyname,"email":email,"password":password,"error":error})    
                 
-    else:   
-            return render(request,"registrationform.html")
+    elif request.method=="POST" and 'login' in request.POST:
+                  try:
+                    email=request.POST['email']
+                    password=request.POST['password']
+                    user=Broker_info.objects.get(email=email)
+                    if password == user.password:
+                        request.session["uid"] =user.id
+                        return HttpResponseRedirect('/profile/') 
+                  except:
+                      return render(request,"home.html",{"error":"some login error"})
+    else:    
+            return render(request,"home.html")
 
 def profile(request):
         try: 
-          request = Request('https://www.WhizAPI.com/api/v2/util/ui/in/indian-city-by-postal-code?AppKey=nwbht9wqibmyynjlv3xezyer&pin=314022')
-          try:
-                response = urlopen(request)
-                temp= response.read()
-                print  temp
-          except URLError, e:
-                print 'No kittez. Got an error code:', e   
+            
           s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
           dic=s.get_decoded()
           b=Broker_info.objects.get(id=dic["uid"])
@@ -123,21 +151,6 @@ def Addtruck(request):
     #else:
 
 
-def  home(request):
-      
-        if request.method=="POST":
-          try:
-            email=request.POST['email']
-            password=request.POST['password']
-            user=Broker_info.objects.get(email=email)
-            if password == user.password:
-                  request.session["uid"] =user.id
-                  return HttpResponseRedirect('/profile/') 
-          except:
-              return render(request,"home.html",{"error":"some login error"})     
-        else:
-            return render(request,"home.html",{"error":""}) 
-    
 
 def logout(request):
       try:  

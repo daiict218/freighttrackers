@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     #'django.contrib.staticfiles',
     'django.contrib.staticfiles',
     'brokers',
+    'bootstrap3',
 
 )
 
