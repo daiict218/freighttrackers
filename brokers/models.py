@@ -53,7 +53,8 @@ class driver_info(models.Model):
     contact_number=models.BigIntegerField(blank=False)
     license_number=models.CharField(max_length=30,blank=False)
     age=models.IntegerField(max_length=2,blank=False)
- 
+    broker=models.ForeignKey('Broker_info')
+    
 class gps_info(models.Model):    
     number=models.IntegerField(max_length=10,blank=False)
 

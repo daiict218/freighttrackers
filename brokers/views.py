@@ -5,6 +5,8 @@ from django.contrib.sessions.models import Session
 from brokers import utils
 from django.core.mail import send_mail
 import random
+from urllib2 import Request, urlopen, URLError
+
 
 # Create your views here.
 def registration(request):
@@ -69,6 +71,7 @@ def registration(request):
 
                         temp=Broker_info.objects.get(email=email)
                         request.session["uid"] =temp.id
+                        
                         return HttpResponseRedirect('/home/')
                     else:
                         return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,
@@ -81,12 +84,17 @@ def registration(request):
             return render(request,"registrationform.html")
 
 def profile(request):
-        try:    
+        try: 
+          request = Request('https://www.WhizAPI.com/api/v2/util/ui/in/indian-city-by-postal-code?AppKey=nwbht9wqibmyynjlv3xezyer&pin=314022')
+          try:
+                response = urlopen(request)
+                temp= response.read()
+                print  temp
+          except URLError, e:
+                print 'No kittez. Got an error code:', e   
           s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
           dic=s.get_decoded()
           b=Broker_info.objects.get(id=dic["uid"])
-          print b.email_status
-          print b.mobile_status
           if b.email_status and  b.mobile_status:
                email=b.email
                lat=24.585370
@@ -141,78 +149,38 @@ def logout(request):
           
 
 def Adddriver(request):
-    if request.method=="GET":
-        try:
+    try:
           s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
-        except:
-            return HttpResponseRedirect('/home/')
-        dic=s.get_decoded()
-        b=Broker_info.objects.get(id=dic["uid"])
+    except:
+          return HttpResponseRedirect('/home/')
+    dic=s.get_decoded()
+    b=Broker_info.objects.get(id=dic["uid"])
+    if request.method=="GET":
         if b.email_status and  b.mobile_status:
            email=b.email
            return render(request,"Adddriver.html",{"email":email})      
         else:
            return HttpResponse("please verify your account") 
 
-    # else:
-    #     fname=request.POST['fname']
-    #     lname=request.POST['lname']
-    #     address=request.POST['address']
-    #     city=request.POST['city']
-    #     state=request.POST['state']
-    #     country=request.POST['country']
-    #     pincode=request.POST['pincode']
-    #     contact_number=long(request.POST['contact_number'])
-    #     pincode,pincode_error=utils.verify_pincode(pincode)
-    #     contact_number,cont_error=utils.verify_mobile(contact_number)
-    #     error=[]
-    #     if fname=='':
-    #         error.append("first name is required")
-    #     if lname=='':
-    #         error.append("last name is required")
-    #     if address=='':
-    #         error.append("address  is required")
-    #     if city=='':
-    #         error.append("city is required")
-    #     if  state=='':
-    #         error.append("state is required")
-    #     if companyname=='':
-    #         error.append("company name is required")                         
-    #     if pincode=='-1':
-    #         pincode=''
-    #         error.append(pincode_error)
-    #     if contact_number=='-1':
-    #         contact_number=''
-    #         error.append(cont_error)
-    #     if email=='-1':
-    #         email=''
-    #         error.append(email_error)          
-    #     if pwd=='-1':
-    #         pwd=''
-    #         error.append(pwd_error) 
-    #     if not error:
-    #         var=Broker_info.objects.filter(email=email)
-    #         if not var:
-    #                     obj=Broker_info(fname=fname,lname=lname,address=address,city=city,
-    #                     state=state,country=country,pincode=pincode,contact_number=long(contact_number),email=email,password=password,companyname=companyname)
-    #                     obj.save()
-    #                     String = utils.generate_string(size= 10)
-    #                     number= random.randrange (10000,10000000 ,3)
-    #                     temp=Broker_info.objects.get(email=email)
-    #                     obj=verification(string=String,number=number,broker_id=temp)
-    #                     obj.save();
+    else:
+        dic=utils.verify_driver(request)  
+        if not dic['error']:
+            obj=driver_info(broker=b,fname=dic['fname'],license_number=dic['license_number'],lname=dic['lname'],address=dic['address'],city=dic['city'],
+            state=dic['state'],country=dic['country'],pincode=dic['pincode'],contact_number=dic['contact_number'],age=dic['age'])
+            obj.save()
+            return HttpResponseRedirect('/managedriver/')
+                        
+        else:
+            return render(request,"Adddriver.html",{"fname":dic['fname'],"lname":dic['lname'],"address":dic['address'],"city":dic['city'],
+            "state":dic['state'] ,"licensenumber":dic['license_number'],"country":dic['country'],"pincode":dic['pincode'],"contact_number":dic['contact_number'],"error":dic['error']})  
 
-    #                    # send_mail('Frieghttrackers', 'Actvate your account by clicking on link  here some link will come', 'from@example.com',
-    #                    #['to@example.com'], fail_silently=False)
-
-    #                     temp=Broker_info.objects.get(email=email)
-    #                     request.session["uid"] =temp.id
-    #                     return HttpResponseRedirect('/home/')
-    #                 else:
-    #                     return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,
-    #                     "state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"email":email,"companyname":companyname,"error":error,"emailerror":"Email Already exist"})  
-    #               else:
-
-    #                  return render(request,"registrationform.html",{"fname":fname,"lname":lname,"address":address,"city":city,"state":state,"country":country,"pincode":pincode,"contact_number":long(contact_number),"companyname":companyname,"email":email,"password":password,"error":error})
-
-                                    
+def managedriver(request):                  
+    try:
+          s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+    except:
+          return HttpResponseRedirect('/home/')
+    dic=s.get_decoded()
+    
+    resultset=driver_info.objects.filter(broker=dic["uid"])
+    driver_set=list(resultset)
+    return render(request,"managedriver.html",{"driver_set":driver_set})                                

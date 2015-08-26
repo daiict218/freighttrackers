@@ -1,4 +1,3 @@
-import os
 import cgi
 import re
 import random
@@ -60,7 +59,14 @@ def verify_pincode(pincode):
     if length==6:
          return (pincode,'')
     else:
-         return ('-1','Wrong pincode')  
+         return ('-1','Wrong pincode') 
+def verify_age(age):
+   
+    length=len(age)
+    if length==2:
+         return (age,'')
+    else:
+         return ('-1','Wrong age')          
             		
 def verify_text(text):
 	return (text,'Success')
@@ -70,6 +76,48 @@ def encrypt(strng):
 
 def generate_string(size = 10, chars =  string.ascii_uppercase + string.digits):
 	return ''.join(random.choice(chars) for _ in range(size))
+
+def verify_driver(request):
+         fname=request.POST['fname']
+         lname=request.POST['lname']
+         address=request.POST['address']
+         city=request.POST['city']
+         state=request.POST['state']
+         country=request.POST['country']
+         pincode=request.POST['pincode']
+         contact_number=request.POST['contact_number']
+         license_number=request.POST['licensenumber']
+         age=request.POST['age']
+         age,age_error=verify_age(age)
+         pincode,pincode_error=verify_pincode(pincode)
+         contact_number,cont_error=verify_mobile(contact_number)
+         error=[]
+         if fname=='':
+             error.append("first name is required")
+         if lname=='':
+             error.append("last name is required")
+         if address=='':
+            error.append("address  is required")
+         if city=='':
+            error.append("city is required")
+         if  state=='':
+            error.append("state is required")
+         if license_number=='':
+            error.append("license is required")   
+         if  country=='':
+            error.append("country is required")                        
+         if pincode=='-1':
+            pincode=''
+            error.append(pincode_error)
+         if contact_number=='-1':
+            contact_number=''
+            error.append(cont_error)
+         if age=='-1':
+            age=''
+            error.append(age_error)   
+         return {"fname":fname,"lname":lname,"address":address,"city":city,"state":state,
+         "pincode":pincode,"contact_number":contact_number,"error":error,"country":country,"age":age
+         ,"license_number":license_number}    	
 
  
  
