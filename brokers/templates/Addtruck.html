@@ -1,53 +1,126 @@
-<html>
+<html lang="en">
+{% load staticfiles %}
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}"  />
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.min.css"%}"/>
+    <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
+    <script src="{% static "Bootstrap/js/bootstrap.min.js"%}"></script>
+    {% include "navbar.html" %}
+</head>	
 <body>
-  <p>your d is {{email}}</p>
-<form action="" method="POST">
-	{% csrf_token %}	
- State:<br>
-<input type="text" name="state" required="True" value={{state}} >
-<br>
-Rto:<br>
-<input type="text" name="rto" required="True" value={{rto}} >
-<br>
-numberone:<br>
-<input type="text" name="numberone" required="True" value={{numberone}} >
-<br>
-numbertwo:<br>
-<input type="text" name="numbertwo" required="True" value={{numbertwo}} >
-<br>
-<br>
-truck type:<br>
-<input type="text" name="trucktype" required="True" value={{trucktype}} >
-<br>
-truck tyre:<br>
-<input type="text" name="trucktyre" required="True" value={{trucktyre}} >
-<br>
-truck model:<br>
-<input type="text" name="truckmodel"  required="True" value={{truckmodel}} >
-<br>
-Capacity in tons:<br>
-<input type="text" name="capacity" required="True" value={{capacity}} >
-<br>
-body length:<br>
-<input type="text" name="bodylength" required="True" value={{bodylength}} >
-<br>
-body width:<br>
-<input type="text" name="bodywidth"  required="True" value={{bodywidth}}>
-<br>
-Preferable item:<br>
-<input type="text" name="prefitem"  required="True" value={{prefitem}}>
-<br>
-RC BOOK:<br>
-<input type="text" name="rcbook" required="True" value={{rcbook}} >
-<br>
-PUC BOOK:<br>
-<input type="text" name="pucbook" required="True" value={{pucbook}} >
-<br>
-INSURANCE BOOK:<br>
-<input type="text" name="insbook" required="True" value={{insbook}} >
-<br>
-<input type="submit" value="SAVE">
-</form>
+   <div class="container">	
+		<form role="form" class="form-horizontal" action="/managetruck/" method="POST">
+			{% csrf_token %}
+			<label >Registration number:</label>
+    		<div class="form-group">
+    			
+        		<div class="col-sm-2">
+      			<select class="form-control" id="sel1" name="state" vaue={{state}}>
+        		<option>GJ</option>
+        		<option>RJ</option>
+        		<option>HR</option>
+        		<option>DL</option>
+      			</select>
+        		</div>
+                <div class="col-sm-2"><input type="text" class="form-control" name="rto" placeholder="12" required value={{rto}}>
+                </div>
+                
+                <div class="col-sm-2"><input type="text" class="form-control" name="numberone" placeholder="C" required value={{numberone}}>
+                </div>
+               
+                <div class="col-sm-2"><input type="text" class="form-control" name="numbertwo" placeholder="1990" required value={{numbertwo}}>
+                </div>
+            </div>
+            <div class="form-group">
+    			
+        		<div class="col-sm-2"><label >Type:</label>
+      			<select class="form-control" id="sel1" name="type" vaue={{trucktype}}>
+        		<option>semitrailer</option>
+        		<option>semitrailer with rail</option>
+        		<option>tank truck</option>
+        		<option>car cairrer</option>
+      			</select>
+        		</div>
+                <div class="col-sm-2"><label >Tyre:</label>
+      			<select class="form-control" id="sel1" name="tyre" vaue={{trucktyre}}>
+        		<option>6</option>
+        		<option>7</option>
+        		<option>8</option>
+        		<option>10</option>
+      			</select>
+        		</div>
+                <div class="col-sm-2"><label>Model:</label><input type="text" class="form-control" name="model" placeholder="TATA-C123456" required value={{model}}>
+                </div>
+               
+                <div class="col-sm-2"><label>Capacity:</label><input type="text" class="form-control" name="capacity" placeholder="in tones" required value={{capacity}}>
+                </div>
+            </div>
+    		<div class="form-group">
+    			
+        		<div class="col-sm-2"><label >Body Lenght:</label>
+      			<select class="form-control" id="sel1" name="length" vaue={{length}}>
+        		<option>16</option>
+        		<option>20</option>
+        		<option>25</option>
+        		<option>30</option>
+      			</select>
+        		</div>
+                <div class="col-sm-2"><label >Body width:</label>
+      			<select class="form-control" id="sel1" name="width" vaue={{width}}>
+        		<option>10</option>
+        		<option>15</option>
+        		<option>12</option>
+        		<option>13</option>
+      			</select>
+        		</div>
+                <div class="col-sm-2"><label>Preferable item</label><input type="text" class="form-control" name="item" placeholder="Packed Cartoons" required value={{item}}>
+                </div>
+                 <div class="col-sm-2"><label >Default driver:</label>
+      			<select class="form-control" id="sel1" name="driver" vaue={{driver}}>
+      				{%for item in driver_list%}
+        		<option>{{item.fname}} {{item.lname}}</option>
+        		    {%endfor%}
+      			</select>
+        		</div>
+                	
+               
+            </div>
+            <div class="form-group">
+                <div>
+                	<lable>PUC</lable>
+                	<input type="file" name="puc">
+                      
+                </div>            
+            </div>
+            <div class="form-group">
+                <div>
+                	<lable>insurance</lable>
+                	<input type="file" name="insurance">
+                      
+                </div>            
+            </div>
+            <div class="form-group">
+                <div>
+                	<lable>RC BOOK</lable>
+                	<input type="file" name="rc">
+                      
+                </div>            
+            </div>
+            <div class="form-group">
+                    <div class="col-sm-6">
+                       <button name="addtruck" type="submit" class="btn btn-info pull-right" value="True">Save</button>
+                    </div>
+               </div>
+   		</form>
+    </div> 
+
+
 
 </body>
 </html>

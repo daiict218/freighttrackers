@@ -31,16 +31,18 @@ class truck_info(models.Model):
     numbertwo=models.IntegerField(max_length=4,blank=False)
     truck_type=models.CharField(max_length=30,blank=False)
     truck_model=models.CharField(max_length=30,blank=False)
-    num_tyre=models.IntegerField(max_length=4,blank=False)
+    truck_tyre=models.IntegerField(max_length=4,blank=False)
     Capacity=models.IntegerField(max_length=10,blank=False)
     body_length=models.IntegerField(max_length=10,blank=False)
     body_width=models.IntegerField(max_length=10,blank=False)
     pref_item=models.CharField(max_length=30,blank=False)
-    rc_book=models.FileField(upload_to='documents/')
-    puc_book=models.FileField(upload_to='documents/')
-    insurance_book=models.FileField(upload_to='documents/')
+    rc_book=models.FileField(upload_to='documents/rc/')
+    puc_book=models.FileField(upload_to='documents/puc/')
+    insurance_book=models.FileField(upload_to='documents/insurance/')
     driver=models.ForeignKey('driver_info')
     gps=models.ForeignKey('gps_info')
+    broker=models.ForeignKey('Broker_info')
+    verify=models.BooleanField(default=False,blank=False)
 
 class driver_info(models.Model):
     fname=models.CharField(max_length=30,blank=False)
@@ -57,7 +59,12 @@ class driver_info(models.Model):
     
 class gps_info(models.Model):    
     number=models.IntegerField(max_length=10,blank=False)
-
+class gps_track(models.Model):
+    gps=models.ForeignKey('gps_info')
+    source_city=models.CharField(max_length=30,blank=False)
+    source_state=models.CharField(max_length=30,blank=False)
+    dest_city=models.CharField(max_length=30,blank=False)
+    dest_state=models.CharField(max_length=30,blank=False)
 
 
 

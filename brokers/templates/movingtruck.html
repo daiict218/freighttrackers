@@ -1,4 +1,5 @@
-<html lang="en">
+<!DOCTYPE html>
+<html>
 {% load staticfiles %}
   <head>
     <meta charset="utf-8">
@@ -6,89 +7,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}"  />
     <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.min.css"%}"/>
-    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.vertical-tabs.css"%}"/>
     <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
     <script src="https://maps.googleapis.com/maps/api/js"></script>
     <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
     <script src="{% static "Bootstrap/js/bootstrap.min.js"%}"></script>
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-    <script type ="text/javascript" src="{%static "js/v.js" %}"></script>
-     {% include "navbar.html" %}
+<script type ="text/javascript" src="{%static "js/v.js" %}"></script>
+    {% include "navbar.html" %}
 
-  </head>
-<body onload="initialize()">
+</head>
   
-    <div class="row">
-         <div class="col-xs-10">
-         </div>
-         <div class="col-xs-2">
-            <a href="/addtruck/" role="button" class="btn btn-success btn-large">ADD TRUCK</a>
-         </div>  
-    </div>    
-<div class="col-xs-2"> <!-- required for floating -->
-    <!-- Nav tabs -->
-    
-       <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#demo">Truck1</button>
-       <div id="demo" class="collapse">
-          <table class="table">
-             <tbody>
-               <tr class="success">
-                 <td>Source:</td>
-                 <td>Delhi</td>
-               </tr>
-               <tr class="danger">
-                 <td>Destination:</td>
-                 <td>Bombay</td>
-               </tr>
-             </tbody>
-          </table>
-      </div>
-      <br>    
-       
-       <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#demo1">Truck1</button>
-       <div id="demo1" class="collapse">
-          <table class="table">
-             <tbody>
-               <tr class="success">
-                 <td>Source:</td>
-                 <td>Delhi</td>
-               </tr>
-               <tr class="danger">
-                 <td>Destination:</td>
-                 <td>Bombay</td>
-               </tr>
-             </tbody>
-          </table>
-      </div>
-      <br>
-      <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#demo2">Truck1</button>
-       <div id="demo2" class="collapse">
-          <table class="table">
-             <tbody>
-               <tr class="success">
-                 <td>Source:</td>
-                 <td>Delhi</td>
-               </tr>
-               <tr class="danger">
-                 <td>Destination:</td>
-                 <td>Bombay</td>
-               </tr>
-             </tbody>
-          </table>
-      </div>
-      <br>
+
+<style>
+html{height:100%;}
+body{height:100%;margin:0px;font-family: Helvetica,Arial;}
+</style>
 
 
-    </ul>
-
-</div>
-
-<div class="col-xs-10">
-     <div class="container" id="map_canvas" style="width:1300px;height:700px;align:center;"></div>
-</div>
-  
-</body>
 <script type="text/javascript">
   
   var map;
@@ -149,7 +85,7 @@ function initialize() {
      map.fitBounds(results[0].geometry.viewport);
 
     }); 
-   setRoutes();
+  // setRoutes();
   } 
 
 
@@ -167,7 +103,7 @@ function createMarker(latlng, label, html,icon) {
 
 
     google.maps.event.addListener(marker, 'click', function() {
-        infowindow.setContent("hello"); 
+        infowindow.setContent(contentString); 
         infowindow.open(map,marker);
         });
     return marker;
@@ -337,13 +273,28 @@ function continueAnimation(index) {
     timerHandle[index] = setTimeout("animate("+index+","+d+")", tick);
 }
 
-
 </script>
+</head>
+<body onload="initialize()">
 
+<div id="tools">
+
+    <button onclick="setRoutes();">Start</button>
+<button onclick="stopAnimation(0);">Pause(0)</button>
+<button onclick="stopAnimation(1);">Pause(1)</button>
+<button onclick="stopAnimation(2);">Pause(2)</button>
+<button onclick="stopAnimation(3);">Pause(3)</button>
+<button onclick="continueAnimation(0);">Continue(0)</button>
+<button onclick="continueAnimation(1);">Continue(1)</button>
+<button onclick="continueAnimation(2);">Continue(2)</button>
+<button onclick="continueAnimation(3);">Continue(3)</button>
+</div>
+
+<div id="map_canvas" style="width:100%;height:100%;"></div>
 
 <script type="text/javascript">
 _uacct = "UA-162157-1";
 urchinTracker();
 </script>
-
+</body>
 </html>

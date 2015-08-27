@@ -4,6 +4,8 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from brokers import utils
 from django.core.mail import send_mail
+
+from uploadform import uploadform
 import random
 import urllib2
 import json
@@ -144,7 +146,7 @@ def profile(request):
                       lat=28.613939
                       lon=77.209021
                         
-               return  render(request,"profile.html",{"email":email,"lat":lat,"lon":lon})      
+               return  render(request,"movingtruck.html",{"email":email,"lat":lat,"lon":lon})      
           else:
               return  HttpResponse("please verify your account")
         except:
@@ -161,11 +163,12 @@ def Addtruck(request):
         b=Broker_info.objects.get(id=dic["uid"])
         if b.email_status and  b.mobile_status:
                 email=b.email
-                return  render(request,"Addtruck.html",{"email":email})      
+                resultset=driver_info.objects.filter(broker_id=b.id)
+                driver_list=list(resultset)
+                return  render(request,"Addtruck.html",{"email":email,"driver_list":driver_list})      
                    
         else:
           return  HttpResponse("please verify your account")
-    #else:
 
 
 
@@ -216,13 +219,52 @@ def managedriver(request):
     return render(request,"managedriver.html",{"driver_set":driver_set}) 
 
 
-def managetruck(request):                  
-    try:
-          s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
-    except:
-          return HttpResponseRedirect('/home/')
-    dic=s.get_decoded()
+def managetruck(request):
+ try:
+      s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+ except:
+      return HttpResponseRedirect('/home/')
+ dic=s.get_decoded() 
+ if  request.method=="GET":                  
+    
     email=Broker_info.objects.get(id=dic["uid"]).email
-    lat=28.613939
-    lon=77.209021
-    return render(request,"managetruck.html",{"email":email,"lat":lat,"lon":lon})                                    
+    result_set=truck_info.objects.filter(broker=dic["uid"])
+    truck_set=list(result_set)
+    place=[]
+    for item in truck_set:
+        temp=gps_track.objects.get(gps=item.gps)
+        
+        d[]
+
+
+    return render(request,"managetruck.html",{"email":email,"lat":lat,"lon":lon})
+ else:
+    name=request.POST['driver']
+    l=name.split(' ', 1 )
+    fname=l[0]
+    lname=l[1]
+    driver=driver_info.objects.get(fname=fname,lname=lname,broker_id=dic["uid"])
+    broker=Broker_info.objects.get(id=dic["uid"])
+    gps=gps_info(id="1")
+    state=request.POST['state']
+    rto=request.POST['rto']
+    numberone=request.POST['numberone']
+    numbertwo=request.POST['numbertwo']
+    truck_type=request.POST['type']
+    truck_tyre=request.POST['tyre']
+    truck_model=request.POST['model']
+    Capacity=request.POST['capacity']
+    body_length=request.POST['length']
+    body_width=request.POST['width']
+    pref_item=request.POST['item']
+    puc_book=request.POST['puc']
+    insurance_book=request.POST['insurance']
+    rc_book=request.POST['rc']
+    obj=truck_info(state=state,rto=rto,numberone=numberone,numbertwo=numbertwo,truck_type
+        =truck_type,truck_tyre=truck_tyre,truck_model=truck_model,body_width=body_width,
+        body_length=body_length,Capacity=Capacity,pref_item=pref_item,puc_book=puc_book,
+        rc_book=rc_book,insurance_book=insurance_book,gps=gps,driver=driver,broker=broker)
+    obj.save()
+
+    return HttpResponse("Soon we we wil contact you") 
+ 
