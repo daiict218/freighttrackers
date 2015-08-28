@@ -228,16 +228,18 @@ def managetruck(request):
  if  request.method=="GET":                  
     
     email=Broker_info.objects.get(id=dic["uid"]).email
-    result_set=truck_info.objects.filter(broker=dic["uid"])
+    result_set=truck_info.objects.filter(broker=dic["uid"] , verify="True")
     truck_set=list(result_set)
+    print truck_set
     place=[]
+    i=0
     for item in truck_set:
         temp=gps_track.objects.get(gps=item.gps)
-        
-        d[]
+        place.append((truck_set[i],temp.source_city,temp.source_state,temp.dest_city,temp.dest_state))
+        i=i+1
+    print place    
 
-
-    return render(request,"managetruck.html",{"email":email,"lat":lat,"lon":lon})
+    return render(request,"managetruck.html",{"email":email,"place":place})
  else:
     name=request.POST['driver']
     l=name.split(' ', 1 )
@@ -266,5 +268,5 @@ def managetruck(request):
         rc_book=rc_book,insurance_book=insurance_book,gps=gps,driver=driver,broker=broker)
     obj.save()
 
-    return HttpResponse("Soon we we wil contact you") 
+    return HttpResponseRedirect("/profile/") 
  

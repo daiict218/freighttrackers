@@ -10,6 +10,7 @@
     <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
     <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
     <script src="{% static "Bootstrap/js/bootstrap.min.js"%}"></script>
+    <script src="{% static "js/multi_step_form.js"%}"></script>
 
   </head>
   <body>
@@ -32,6 +33,7 @@
 		  </nav>
        </div>		
     </div>
+    <div >
     <div class="container">
  
   <!-- Trigger the modal with a button -->
@@ -145,14 +147,80 @@
       
     </div>
   </div>
-</div>  
+</div> 
+
+<div class="container">
+<div  class="main">
+<form class="regform" action="#" method ="get">
+  <!-- progressbar -->
   
+  
+  <!-- fieldsets -->
+  <fieldset id="first">
+    <div class="form-group col-sm-12">
+              <div class="col-sm-3">
+               <input type="text" class="form-control"  name="fname"  placeholder="FROM" required value={{ORIGIN}} >
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" name="lname" placeholder="TO" required value={{DESTINATION}}>
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" name="PICKUP" placeholder="PICKUP" required value={{PICKUP}}>
+              </div>
+              <div class="col-sm-3">
+               <input type="button" id="next_btn1" value="Next" onclick="next_step1()" />
+              </div>  
+    </div>
+    
+  </fieldset>
+  <fieldset id="second">
+    <div class="form-group col-sm-12">
+              <div class="col-sm-3">
+               <input type="text" class="form-control"  name="type"  placeholder="Truck Type" required value={{type}} >
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" name="quantity" placeholder="Quantity" required value={{quantity}}>
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" name="Load Type" placeholder="Load Type" required value={{loadtype}}>
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" name="cost" placeholder="Estimate Cost" required value={{cost}}>
+              </div>
+               
+    </div>
+    <input type="button" id="pre_btn1" value="Previous" onclick="prev_step1()"/>
+    <input type="button" name="next" id="next_btn2" value="Next" onclick="next_step2()" />
+  </fieldset>
+  <fieldset id="third">
+    <div class="form-group col-sm-12">
+              <div class="col-sm-4">
+               <input type="text" class="form-control"  name="email"  placeholder="Email" required value={{email}} >
+              </div>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="password" placeholder="Password" required value={{password}}>
+              </div>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="Contact" placeholder="Contact number" required value={{contact}}>
+              </div>
+    <input type="button" id="pre_btn2" value="Previous" onclick="prev_step2()"/>
+    <input type="submit" class="submit_btn" value="Submit" onclick="validation(event)"/>
+  </div>
+  </fieldset>
+</form>
+</div>
 
 
 
+</div>
 
+  
 <div class="well">
-</div>          
+</div>
+
+
+
+          
 
   </body>
 </html

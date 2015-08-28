@@ -1,0 +1,75 @@
+html lang="en">
+{% load staticfiles %}
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}"  />
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.min.css"%}"/>
+    <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
+    <script src="{% static "Bootstrap/js/bootstrap.min.js"%}"></script>
+    <script src="{% static "js/multi_step_form.js"%}"></script>
+    {% include "navbar.html" %}
+
+</head>
+<div class="container">
+<div  class="main">
+<form class="regform" action="#" method ="get">
+	<!-- progressbar -->
+	<ul id="progressbar">
+		<li id="active1">Create Account</li>
+		<li id="active2">Educational Profiles</li>
+		<li id="active3">Personal Details</li>
+	</ul>
+	
+	<!-- fieldsets -->
+	<fieldset id="first">
+		<h2 class="title">Create your account</h2>
+		<p class="subtitle">Step 1</p>
+		<input type="text" class="text_field" name="email" placeholder="Email" value=""/><br/>
+		<input type="password" class="text_field" name="pass" placeholder="Password" value=""/><br/>
+		<input type="password" class="text_field" name="cpass" placeholder="Confirm Password" value=""/><br/>
+		<input type="button" id="next_btn1" value="Next" onclick="next_step1()" />
+	</fieldset>
+	<fieldset id="second">
+		<h2 class="title">Educational Profiles</h2>
+		<p class="subtitle">Step 2</p>
+		<select class="options">
+		<option>--Select Education--</option>
+		<option>Post Graduate</option>
+		<option>Graduate</option>
+		<option>HSC</option>
+		<option>SSC</option>
+		</select><br/>
+		<input type="text" name="marks" class="text_field" placeholder="Marks Obtained" value=""/><br/>
+		<input type="text" name="pyear" class="text_field"  placeholder="Passing Year" value=""/><br/>
+		<input type="text" name="univ" class="text_field"  placeholder="University" /><br/>
+		<input type="button" id="pre_btn1" value="Previous" onclick="prev_step1()"/>
+		<input type="button" name="next" id="next_btn2" value="Next" onclick="next_step2()" />
+	</fieldset>
+	<fieldset id="third">
+		<h2 class="title">Personal Details</h2>
+		<p class="subtitle">Step 3</p>
+		<input type="text" name="fname" class="text_field" placeholder="First Name" /><br/>
+		<input type="text" name="lname" class="text_field" placeholder="Last Name" /><br/>
+		<input type="text" name="cont" class="text_field" placeholder="Contact" /><br/>
+		<label>Gender</label><br/>
+		<input name="gender" type="radio" value="Male"/>Male<br/>
+		<input name="gender" type="radio" value="Female"/>Female<br/>
+		<textarea name="address" placeholder="Address"></textarea><br/>
+		<input type="button" id="pre_btn2" value="Previous" onclick="prev_step2()"/>
+		<input type="submit" class="submit_btn" value="Submit" onclick="validation(event)"/>
+	</fieldset>
+</form>
+</div>
+
+
+
+</div>
+</body>
+</html>

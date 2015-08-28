@@ -23,73 +23,46 @@
          <div class="col-xs-10">
          </div>
          <div class="col-xs-2">
-            <a href="/addtruck/" role="button" class="btn btn-success btn-large">ADD TRUCK</a>
+            <a href="/addtruck/" role="button" class="btn btn-success btn-large btn-block">ADD TRUCK</a>
          </div>  
     </div>    
-<div class="col-xs-2"> <!-- required for floating -->
+<div class="col-xs-3"> <!-- required for floating -->
     <!-- Nav tabs -->
-    
-       <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#demo">Truck1</button>
-       <div id="demo" class="collapse">
-          <table class="table">
+ <button type="button" class="btn btn-primary btn-block" onclick="showtruck(-1)">ALL</button>
+ <br>
+    {% for a,b,c,d,e in place%}
+       <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target='#demo{{a.id}}' onclick="showtruck({{ a.id}})">{{a.state}}:{{a.rto}}:{{a.numberone}}:{{a.numbertwo}}</button>
+       <div id='demo{{a.id}}' class="collapse ">
+         
+          <table class="table table-responsive ">
              <tbody>
                <tr class="success">
                  <td>Source:</td>
-                 <td>Delhi</td>
+                 <td>{{b}},{{c}}</td>
                </tr>
                <tr class="danger">
                  <td>Destination:</td>
-                 <td>Bombay</td>
+                 <td>{{d}},{{e}}</td>
                </tr>
              </tbody>
           </table>
+          <button type="button" class="btn btn-danger btn-block" onclick="deletetruck()">Deregister your truck</button>
+        
       </div>
-      <br>    
-       
-       <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#demo1">Truck1</button>
-       <div id="demo1" class="collapse">
-          <table class="table">
-             <tbody>
-               <tr class="success">
-                 <td>Source:</td>
-                 <td>Delhi</td>
-               </tr>
-               <tr class="danger">
-                 <td>Destination:</td>
-                 <td>Bombay</td>
-               </tr>
-             </tbody>
-          </table>
-      </div>
-      <br>
-      <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#demo2">Truck1</button>
-       <div id="demo2" class="collapse">
-          <table class="table">
-             <tbody>
-               <tr class="success">
-                 <td>Source:</td>
-                 <td>Delhi</td>
-               </tr>
-               <tr class="danger">
-                 <td>Destination:</td>
-                 <td>Bombay</td>
-               </tr>
-             </tbody>
-          </table>
-      </div>
-      <br>
 
-
-    </ul>
+      <br>
+    {% endfor %}    
 
 </div>
 
-<div class="col-xs-10">
+
+<div class="col-xs-9">
      <div class="container" id="map_canvas" style="width:1300px;height:700px;align:center;"></div>
 </div>
   
 </body>
 <script type="text/javascript">
+
   
   var map;
   var directionDisplay;
@@ -113,18 +86,17 @@
   var myPano;   
   var panoClient;
   var nextPanoId;
-  
+  var i=0;
   var startLoc = new Array();
-  startLoc[0] = 'rio claro, trinidad';
-  startLoc[1] = 'preysal, trinidad';
-  startLoc[2] = 'san fernando, trinidad';
-  startLoc[3] = 'couva, trinidad';
-
   var endLoc = new Array();
-  endLoc[0] = 'princes town, trinidad';
-  endLoc[1] = 'tabaquite, trinidad';
-  endLoc[2] = 'mayaro, trinidad';
-  endLoc[3] = 'arima, trinidad';
+  var vehicle=new Array();
+  var infowindow=new Array();
+  {% for a,b,c,d,e in place%}
+     startLoc[i]='{{b}},{{c}}'
+     endLoc[i]='{{d}},{{e}}'
+     vehicle[i]='{{a.state}}:{{a.rto}}:{{a.numberone}}:{{a.numbertwo}}'
+     i=i+1
+  {% endfor %}
 
 
   var Colors = ["#FF0000", "#00FF00", "#0000FF"];
@@ -138,24 +110,20 @@ function initialize() {
     });
 
     var myOptions = {
-      zoom: 10,
+      center:new google.maps.LatLng(28.613939,77.209021),
+      zoom:5,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-    address = 'Trinidad and Tobago'
-    geocoder = new google.maps.Geocoder();
-    geocoder.geocode( { 'address': address}, function(results, status) {
-     map.fitBounds(results[0].geometry.viewport);
-
-    }); 
+    
    setRoutes();
   } 
 
 
 function createMarker(latlng, label, html,icon) {
 // alert("createMarker("+latlng+","+label+","+html+","+color+")");
-    var contentString = '<b>'+label+'</b><br>'+html;
+    var contentString = '<b>'+vehicle[label]+'</b><br>'+startLoc[label]+" to "+endLoc[label];
     var marker = new google.maps.Marker({
         position: latlng,
         map: map,
@@ -166,12 +134,17 @@ function createMarker(latlng, label, html,icon) {
         marker.myname = label;
 
 
-    google.maps.event.addListener(marker, 'click', function() {
+    /*google.maps.event.addListener(marker, 'click', function() {
         infowindow.setContent("hello"); 
-        infowindow.open(map,marker);
-        });
+        
+        });*/
+       infowindow[label] = new google.maps.InfoWindow({
+      content: contentString
+  });
+    infowindow[label].open(map,marker);
     return marker;
 }  
+
 
 function setRoutes(){   
 
@@ -243,7 +216,7 @@ function setRoutes(){
                 startLocation[routeNum].latlng = legs[i].start_location;
                 startLocation[routeNum].address = legs[i].start_address;
                 // marker = google.maps.Marker({map:map,position: startLocation.latlng});
-                marker[routeNum] = createMarker(legs[i].start_location,"start "+routeNum,legs[i].start_address,"{% static "img/1.png"%}");
+                marker[routeNum] = createMarker(legs[i].start_location,routeNum,legs[i].start_address,"{% static "img/1.png"%}");
               }
               endLocation[routeNum].latlng = legs[i].end_location;
               endLocation[routeNum].address = legs[i].end_address;
@@ -336,7 +309,34 @@ function continueAnimation(index) {
     d=currentDistance[index];
     timerHandle[index] = setTimeout("animate("+index+","+d+")", tick);
 }
+function showtruck(num){
+  if(num !=-1){
+     num=num-1;
+     
+     for(x=0;x<marker.length;x++){
+        if(x!=num){
+         marker[x].setVisible(false);
+         infowindow[x].close(map,marker[x]);
+        }
+        else{
+          marker[x].setVisible(true);
+         infowindow[x].open(map,marker[x]); 
+        }
+     }
+   }
+   else{
+      for(x=0;x<marker.length;x++){
+      
+         marker[x].setVisible(true);
+         infowindow[x].open(map,marker[x]);
+        
+     }
+   }
+}
 
+function deletetruck(){
+  alert("We have received your request.We will get back to you soon");
+}
 
 </script>
 
