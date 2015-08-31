@@ -67,6 +67,28 @@ class gps_track(models.Model):
     dest_state=models.CharField(max_length=30,blank=False)
 
 
+class  load_info(models.Model):
+    source = models.CharField(max_length=30,blank=False)
+    destination = models.CharField(max_length=30,blank=False)
+    pickupdate=models.DateField(blank=False)
+    loadtype=models.CharField(max_length=30,blank=False)
+    quantity=models.CharField(max_length=30,blank=False)
+    numoftruck=models.IntegerField(blank=False)
+    shipper=models.ForeignKey('Shipper_info')
+
+class Shipper_info(models.Model):
+    email=models.EmailField(blank=False,unique=True)
+    password =models.CharField(max_length=30,blank=True)
+    contact_number=models.BigIntegerField(blank=False)
+    email_status=models.BooleanField(default=True,blank=False)
+
+class deal(models.Model):
+    load_info=models.ForeignKey('load_info')
+    Broker_info=models.ForeignKey('Broker_info')
+    cost=models.IntegerField(blank=False)        
+       
+
+
 
 
 

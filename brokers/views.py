@@ -114,13 +114,28 @@ def home(request):
                     user=Broker_info.objects.get(email=email)
                     if password == user.password:
                         request.session["uid"] =user.id
-                        return HttpResponseRedirect('/profile/') 
+                        return HttpResponseRedirect('/profile/')
+                    else:
+                        return HttpResponseRedirect('/home/')     
                   except:
                       return render(request,"home.html",{"error":"some login error"})
     else:    
             return render(request,"home.html")
 
 def profile(request):
+  if request.method=="POST":
+         cost=request.POST['cost']
+         loadid=int(request.POST['request'])
+         print loadid
+         s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+         dic=s.get_decoded()
+         b=Broker_info.objects.get(id=  dic["uid"])
+         l=load_info.objects.get(id=loadid)
+         obj=deal(cost=cost,load_info=l,Broker_info=b)
+         obj.save()
+         print "hello"
+         return HttpResponseRedirect("/profile/")
+  else:  
         try: 
             
           s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
@@ -145,8 +160,11 @@ def profile(request):
                except: 
                       lat=28.613939
                       lon=77.209021
+
+               resultset=load_info.objects.all()
+               loadlist=list(resultset)       
                         
-               return  render(request,"movingtruck.html",{"email":email,"lat":lat,"lon":lon})      
+               return  render(request,"profile.html",{"email":email,"lat":lat,"loadlist":loadlist,"lon":lon})      
           else:
               return  HttpResponse("please verify your account")
         except:
@@ -269,4 +287,37 @@ def managetruck(request):
     obj.save()
 
     return HttpResponseRedirect("/profile/") 
+
+
+def shipperProfile(request):
+    if request.method=="GET":
+        source = request.GET['source']
+        destination = request.GET['destination']
+        pickupdate=request.GET['pickupdate']
+        loadtype=request.GET['loadtype']
+        quantity=request.GET['quantity']
+        numoftruck=request.GET['numoftruck']
+        email=request.GET['email']
+        password =request.GET['password']
+        contact_number=request.GET['contact_number']
+        try:
+            temp=Shipper_info.objects.get(email=email)
+            obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
+            loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=temp)
+            obj.save()
+            return HttpResponseRedirect("/home/")   
+        except:
+           obj=Shipper_info(email=email,password=password,contact_number=contact_number)
+           obj.save()
+           temp=Shipper_info.objects.get(email=email)              
+           obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
+           loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=temp)
+           obj.save()
+           return render(request,"shipperprofile.html")
+
+    
+           
+
+
+
  

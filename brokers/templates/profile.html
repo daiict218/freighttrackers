@@ -17,13 +17,77 @@
 <body>
 
  
-<div class="container" id="map-canvas" style="width:1450px;height:700px;align:center;"></div>
+<div class="container" id="map-canvas" style="width:1650px;height:900px;align:center;">
+</div>
+
+  <!-- You can even embed a Google Form here -->
+
+<div class=" col-xs-5 well">
+  <div class="list-group ">
+    <a class="list-group-item active">
+      <h4 class="list-group-item-heading"><b>NEW OFFERS</b></h4>
+      
+    </a>
+    {%for item in loadlist%}
+    <table class="table table-hover ">
+  
+      <tr>
+        <td><b>Source:</b>{{item.source}}</td>
+        <td><b>Destination:</b>{{item.destination}}</td>
+        <td><b>Date:</b>{{item.pickupdate}}</td>
+      </tr>
+      <tr>
+        <td><b>Type:</b>{{item.loadtype}}</td>
+        <td><b>Truck:</b>{{item.numoftruck}}</td>
+        <td><b>Quantity:</b>{{item.quantity}}</td>
+      </tr>
+      
+  
+  </table>
+  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#loginModal{{item.id}}" name="deal"{{item.id}} >Request</button>
+  <div class="container">
+  <div class="modal fade" id="loginModal{{idtem.id}}" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+            
+          <h1 class="text-muted">Cost </h1>
+          <hr/>
+          <form action="/profile/" method="POST">
+            {%csrf_token%}
+            <div class="form-group">
+            <input type="text" class="form-control i" name="cost" placeholder="Cost" required name="cost" value={{cost}}>
+            </div>
+            <button type="submit" class="btn btn-success" name="request" value={{item.id}} onclick="message()">Submit</button>
+          </form>
+    </div>
+       
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+  <br>
+  <br>
+    {%endfor%}
+  </div>
+</div>
+
+
+
+  
+
+
+
 </body>
 
 
-    <!-- GOOGLE FONTS-->
-    
- <script>
+  <script>
 
   // In the following example, markers appear when the user clicks on the map.
   // The markers are stored in an array.
@@ -60,7 +124,7 @@
   });
    markers.push(marker);
    document.getElementById("lat").value = location.lat();
-   document.getElementById("lon").value = location.lng();
+   document.getElementById("long").value = location.lng();
 
 
    var infowindow = new google.maps.InfoWindow({
@@ -83,29 +147,11 @@ function clearMarkers() {
 
 
 google.maps.event.addDomListener(window, 'load', initialize);
-  /*var mygetrequest=new ajaxRequest()
-  mygetrequest.onreadystatechange=function(){
-   if (mygetrequest.readyState==4){
-    if (mygetrequest.status==200 || window.location.href.indexOf("http")==-1){
-     document.getElementById("result").innerHTML=mygetrequest.responseText
-    }
-    else{
-     alert("An error has occured making the request")
-    }
-   }
-  }
-  var f1=encodeURIComponent(document.getElementById("demo").value)
-  var f2=encodeURIComponent(document.getElementById("demo1").value)
-  mygetrequest.open("GET", "?demo="+f1+"&demo1="+f2, true)
-  mygetrequest.send(null)
-  */
-</script>
 
+function message(){
+  alert("We will contact you soon")
+}
  
-            
-           
-
-          
-         
+</script>
             
         
