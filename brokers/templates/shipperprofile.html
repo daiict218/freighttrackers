@@ -1,0 +1,235 @@
+<html lang="en">
+{% load staticfiles %}
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}"  />
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.min.css"%}"/>
+    <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
+    <script src="{% static "Bootstrap/js/bootstrap.min.js"%}"></script>
+<nav class="navbar navbar-default" role="navigation">
+   <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" 
+         data-target="#menu-collapse">
+         <span class="sr-only">Toggle navigation</span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/home/">Freighttrackers</a>
+   </div>
+   <div class="collapse navbar-collapse " id="menu-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        
+         <li><a href="/notification/">Notification</a></li>
+         <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <b>{{email}}</b><b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+               <li><a href="#">view</a></li>
+               <li><a href="#">edit</a></li>
+               <li><a href="#">Transaction</a></li>
+               <li><a href="#">Documents</a></li>
+            </ul>
+         </li>
+         <li ><a href="/logout/">Logout</a></li>
+
+      </ul>
+   </div>
+</nav> 
+
+</head>
+<body>
+    <div 
+        id="map-canvas1">
+    </div>
+<div class="quoteform">
+    <form>
+        <div class="form-group col-sm-12">
+              <div class="col-sm-4">
+               <input type="text" class="form-control"  name="source"  placeholder="FROM" required value={{ORIGIN}} >
+              </div>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="destination" placeholder="TO" required value={{DESTINATION}}>
+              </div>
+             <div class="col-sm-4">
+                <div class="input-group add-on col-sm-2 date datepicker" data-date-format="yyyy-mm-dd">
+                       <input name="calendervalue" placeholder="Pick up date" id="calendervalue" value="" class="form-control date-picker" data-date-format="yyyy-mm-dd" type="text" required>
+                    <div class="input-group-btn">
+                       <button class="btn" onclick="loadcalender()"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </div>
+                    <div id="calender">
+                    </div> 
+               </div>
+             </div>  
+        </div>   
+        <div class="form-group col-sm-12">
+             <div class="col-sm-4">
+                <select  class="form-control" name="loadtype" placeholder="Load Type" required value={{loadtype}}>
+                  <option disabled selected>Load Type</option>
+                 <option >Container</option>
+                 <option >Coal And Ash</option>
+                 <option >Fruts And vegitable</option>
+                 <option >Liquid and oil</option>
+                 <option >Chemicles</option>
+                 <option >Machinery</option>
+                 <option >textiles</option>
+                 <option >Vehicles part</option>
+                </select> 
+              </div>
+              <div class="col-sm-4">
+                <Select  class="form-control" name="quantity" placeholder="Quantity" required value={{quantity}}>
+                <option disabled selected>Quantity(Tones)</option>
+                 <option >1-3</option>
+                 <option >4-6</option>
+                 <option >7-10</option>
+                 <option >11-15</option>
+                 <option >16-20</option>
+                 <option >17-21</option>
+                 <option >22-25</option>
+                 <option>25-35</option>
+                </select> 
+              </div>
+              
+              <div class="col-sm-4">
+                <Select  class="form-control" name="numoftruck" required value={{trucknum}}>
+                <option disabled selected>Trucks</option>
+                 <option >1</option>
+                 <option >2</option>
+                 <option >3</option>
+                 <option >4</option>
+                 <option >5</option>
+                 <option >6</option>
+                 <option >7</option>
+                 <option>8</option>
+                </select>
+              </div> 
+        </div> 
+        <button class=" setbtn btn btn-primary">Quote</button>
+   </form>
+</div>
+<div class="requestdetail">
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Load Detail</th>
+        <th>Comapny</th>
+        <th>Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for item in lst%}
+      <tr>
+        <td><button class=" setbtn1 btn btn-primary" data-toggle="modal" data-target="#loadid{{item.id}}" >Load</button></td>
+        <td>{{item.companyname}}</td>
+        <td>{{item.cost}}</td>
+        <td><button class="setbtn1 btn btn-success" onclick="requestaccept()">Accept</button></td>
+      </tr>
+      <div class="modal fade" id="loadid{{item.id}}" role="dialog">
+            <div class="modal-dialog">
+    
+      <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div>
+                            <h1>Load Detail<h1>
+                             <ul class="list-group">
+                                  <li class="list-group-item list-group-item-info">Source:{{item.source}}</li>
+                                  <li class="list-group-item list-group-item-info">Destination:{{item.destination}}</li>
+                                  <li class="list-group-item list-group-item-info">PickupDate:{{item.pickupdate}}</li>
+                                  <li class="list-group-item list-group-item-info">Load Type:{{item.loadtype}}</li>
+                                  <li class="list-group-item list-group-item-info">Quantity:{{item.quantity}}</li>
+                                  <li class="list-group-item list-group-item-info">Required truck:{{item.numoftruck}}</li>
+                             </ul>
+                        </div>            
+                    </div>
+       
+                    <div class="modal-footer">
+                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+      
+            </div>
+    </div>    
+
+
+
+      {% endfor%}
+
+      
+    </tbody>
+  </table>
+
+</div>    
+</body>    
+</html>
+<script>
+function requestaccept(){
+    alert("We will contact soon")
+}
+
+
+  
+  // The markers are stored in an array.
+  // The user can then click an option to hide, show or delete the markers.
+  var map;
+  var markers = [];
+
+  function initialize() {
+    var haightAshbury = new google.maps.LatLng(parseFloat({{lat}}),parseFloat({{lon}}));
+    var mapOptions = {
+      zoom: 12,
+      center: haightAshbury,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById('map-canvas1'),
+      mapOptions);
+
+    
+    google.maps.event.addListener(map, 'click', function(event) {
+      addMarker(event.latLng);
+    });
+
+    
+    addMarker(haightAshbury);
+  }
+
+
+  function addMarker(location) {
+   clearMarkers();
+   markers = [];
+   var marker = new google.maps.Marker({
+    position: location,
+    map: map
+  });
+   markers.push(marker);
+   document.getElementById("lat").value = location.lat();
+   document.getElementById("long").value = location.lng();
+
+
+   var infowindow = new google.maps.InfoWindow({
+    content: "<b>{{fname}}</b>" 
+  });
+   infowindow.open(map,marker);
+ }
+
+
+ function setAllMap(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+
+function clearMarkers() {
+  setAllMap(null);
+}
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>

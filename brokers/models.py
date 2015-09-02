@@ -85,7 +85,8 @@ class Shipper_info(models.Model):
 class deal(models.Model):
     load_info=models.ForeignKey('load_info')
     Broker_info=models.ForeignKey('Broker_info')
-    cost=models.IntegerField(blank=False)        
+    cost=models.IntegerField(blank=False)
+    Shipper_info=models.ForeignKey('Shipper_info')       
        
 
 

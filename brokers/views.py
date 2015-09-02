@@ -30,7 +30,7 @@ def home(request):
                   contact_number,cont_error=utils.verify_mobile(contact_number)
                   email,email_error=utils.verify_email(email)
                   pwd,pwd_error=utils.verify_passwords(password,crpassword)
-                  
+                  calender=myform()
                   error=[]
                   if fname=='':
                        error.append("first name is required")
@@ -119,6 +119,44 @@ def home(request):
                         return HttpResponseRedirect('/home/')     
                   except:
                       return render(request,"home.html",{"error":"some login error"})
+
+    elif request.method=="POST" and 'shipperlogin' in request.POST:
+                  try:
+                    email=request.POST['shipperemail']
+                    password=request.POST['shipperpassword']
+                    user=Shipper_info.objects.get(email=email)
+                    if password == user.password:
+                        request.session["uid"] =user.id
+                        return HttpResponseRedirect('/shipperprofile/')
+                    else:
+                        return render(request,"home.html",{"error":"Wrong Password"})     
+                  except:
+                      return render(request,"home.html",{"error":"some login error"}) 
+    elif request.method=='POST' and 'query' in request.POST:
+                  source = request.GET['source']
+                  destination = request.GET['destination']
+                  pickupdate=request.GET['pickupdate']
+                  loadtype=request.GET['loadtype']
+                  quantity=request.GET['quantity']
+                  numoftruck=request.GET['numoftruck']
+                  email=request.GET['email']
+                  password =request.GET['password']
+                  contact_number=request.GET['contact_number']
+                  try:
+                        temp=Shipper_info.objects.get(email=email)
+                        obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
+                        loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=temp)
+                        obj.save()
+                        return render(request,"home.html",{"error":"Shipper already have account please login by that acccount"})   
+                  except:
+                        obj=Shipper_info(email=email,password=password,contact_number=contact_number)
+                        obj.save()
+                        temp=Shipper_info.objects.get(email=email)              
+                        obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
+                        loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=temp)
+                        obj.save()
+                        return HttpResponseRedirect('/shipperprofile/')
+                                                                      
     else:    
             return render(request,"home.html")
 
@@ -131,7 +169,8 @@ def profile(request):
          dic=s.get_decoded()
          b=Broker_info.objects.get(id=  dic["uid"])
          l=load_info.objects.get(id=loadid)
-         obj=deal(cost=cost,load_info=l,Broker_info=b)
+         shipper=Shipper_info.objects.get(id=l.shipper_id)
+         obj=deal(cost=cost,load_info=l,Broker_info=b,Shipper_info=shipper)
          obj.save()
          print "hello"
          return HttpResponseRedirect("/profile/")
@@ -142,29 +181,29 @@ def profile(request):
           dic=s.get_decoded()
           b=Broker_info.objects.get(id=dic["uid"])
           if b.email_status and  b.mobile_status:
-               email=b.email
-               address=b.address
-               city=b.city
-               state=b.state
-               country=b.country
-               print 'https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state)
+              email=b.email
+              address=b.address
+              city=b.city
+              state=b.state
+              country=b.country
+               #print 'https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state)
                
-               try:
-                  response1 = urllib2.urlopen('https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state))
-                  temp=json.load(response1)
-                  print temp
-                  dic=temp[0]
-                  lat=dic['lat']
-                  lon=dic['lng']          
+               #try:
+               #   response1 = urllib2.urlopen('https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state))
+               #   temp=json.load(response1)
+               #    print temp
+               #    dic=temp[0]
+               #    lat=dic['lat']
+               #    lon=dic['lng']          
                          
-               except: 
-                      lat=28.613939
-                      lon=77.209021
+               # except: 
+              lat=28.613939
+              lon=77.209021
 
-               resultset=load_info.objects.all()
-               loadlist=list(resultset)       
+              resultset=load_info.objects.all()
+              loadlist=list(resultset)       
                         
-               return  render(request,"profile.html",{"email":email,"lat":lat,"loadlist":loadlist,"lon":lon})      
+              return  render(request,"profile.html",{"email":email,"lat":lat,"loadlist":loadlist,"lon":lon})      
           else:
               return  HttpResponse("please verify your account")
         except:
@@ -291,29 +330,29 @@ def managetruck(request):
 
 def shipperProfile(request):
     if request.method=="GET":
-        source = request.GET['source']
-        destination = request.GET['destination']
-        pickupdate=request.GET['pickupdate']
-        loadtype=request.GET['loadtype']
-        quantity=request.GET['quantity']
-        numoftruck=request.GET['numoftruck']
-        email=request.GET['email']
-        password =request.GET['password']
-        contact_number=request.GET['contact_number']
-        try:
-            temp=Shipper_info.objects.get(email=email)
-            obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
-            loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=temp)
-            obj.save()
-            return HttpResponseRedirect("/home/")   
-        except:
-           obj=Shipper_info(email=email,password=password,contact_number=contact_number)
-           obj.save()
-           temp=Shipper_info.objects.get(email=email)              
-           obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
-           loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=temp)
-           obj.save()
-           return render(request,"shipperprofile.html")
+            s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+            dic=s.get_decoded()
+            b=Shipper_info.objects.get(id= dic["uid"])
+            email=b.email
+            resultset=deal.objects.filter(Shipper_info=dic["uid"])
+            list_deal=list(resultset)
+            lst=[]
+            
+            for item in list_deal:
+                  send={}
+                  load=item.load_info_id
+                  s=load_info.objects.get(id=load)
+                  b=item.Broker_info_id
+                  broker=Broker_info.objects.get(id=b)
+                  send={"id":item.id,"source":s.source,"destination":s.destination,"pickupdate":s.pickupdate,"loadtype":s.loadtype,
+                  "quantity":s.quantity,"numoftruck":int(s.numoftruck),"cost":item.cost,"companyname":broker.companyname}
+                  lst.append(send)
+            print lst 
+            lat=28.613939
+            lon=77.209021         
+                    
+            return render(request,'shipperprofile.html',{"email":email,"lst":lst,"lat":lat,"lon":lon})
+        
 
     
            
