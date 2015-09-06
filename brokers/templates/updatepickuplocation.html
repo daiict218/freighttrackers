@@ -1,0 +1,129 @@
+<html lang="en">
+{% load staticfiles %}
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}"  />
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.min.css"%}"/>
+    <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
+    <script src="{% static "Bootstrap/js/bootstrap.min.js"%}"></script>
+<nav class="navbar navbar-default" role="navigation">
+   <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" 
+         data-target="#menu-collapse">
+         <span class="sr-only">Toggle navigation</span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+         <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/home/">Freighttrackers</a>
+   </div>
+   <div class="collapse navbar-collapse " id="menu-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        
+         <li><a href="/notification/">Notification</a></li>
+         <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <b>{{email}}</b><b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+               <li><a href="#">view</a></li>
+               <li><a href="#">edit</a></li>
+               <li><a href="#">Transaction</a></li>
+               <li><a href="#">Documents</a></li>
+            </ul>
+         </li>
+         <li ><a href="/logout/">Logout</a></li>
+
+      </ul>
+   </div>
+</nav> 
+
+</head>
+
+
+<body>
+    <div class="up col-xs-5">
+        <form action="" method="POST">
+            {%csrf_token%}
+            <input type="hidden" name="lat" id="lat">
+            <input type="hidden" name="lon" id="lon">
+            <button type="submit" class="btn up btn-success">UPDATE</button>
+        </form>
+
+    </div>
+    <div  id="map-canvas" style="width:1650px;height:900px;align:center;">
+    </div>
+    
+</body>
+</html>
+<script>
+
+  // In the following example, markers appear when the user clicks on the map.
+  // The markers are stored in an array.
+  // The user can then click an option to hide, show or delete the markers.
+  var map;
+  var markers = [];
+
+  function initialize() {
+    var haightAshbury = new google.maps.LatLng(parseFloat({{lat}}),parseFloat({{lon}}));
+    var mapOptions = {
+      zoom: 12,
+      center: haightAshbury,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+    
+    google.maps.event.addListener(map, 'click', function(event) {
+      addMarker(event.latLng);
+    });
+
+    
+    addMarker(haightAshbury);
+  }
+
+
+  function addMarker(location) {
+   clearMarkers();
+   markers = [];
+   var marker = new google.maps.Marker({
+    position: location,
+    map: map
+  });
+   markers.push(marker);
+   document.getElementById("lat").value = location.lat();
+   document.getElementById("lon").value = location.lng();
+
+
+   var infowindow = new google.maps.InfoWindow({
+    content: "<b>{{fname}}</b>" 
+  });
+   infowindow.open(map,marker);
+ }
+
+
+ function setAllMap(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+
+function clearMarkers() {
+  setAllMap(null);
+}
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function message(){
+  alert("We will contact you soon")
+}
+ 
+</script>

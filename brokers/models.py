@@ -6,17 +6,17 @@ class  Broker_info(models.Model):
     fname = models.CharField(max_length=30,blank=False)
     lname = models.CharField(max_length=30,blank=False)
     email=models.EmailField(blank=False,unique=True)
-    address =models.CharField(max_length=30,blank=True)
     city=models.CharField(max_length=30,blank=False)
     state=models.CharField(max_length=30,blank=True)
-    country=models.CharField(max_length=30,blank=False)
-    pincode=models.IntegerField(blank=False,validators=[RegexValidator(regex='^.{6}$', message='Length has to be 6', code='nomatch')])
     contact_number=models.BigIntegerField(blank=False)
     password = models.CharField(max_length=50,blank=False)
     companyname=models.CharField(max_length=30,blank=False)
     rating=models.IntegerField(default=0,blank=False)
     email_status=models.BooleanField(default=True,blank=False)
     mobile_status=models.BooleanField(default=True,blank=False)
+    lat=models.DecimalField(max_digits=12, decimal_places=9,blank=True)
+    lon=models.DecimalField(max_digits=12, decimal_places=9,blank=True)
+    updatelocation=models.BooleanField(default=False)
 
 
 class verification(models.Model):
@@ -75,13 +75,19 @@ class  load_info(models.Model):
     quantity=models.CharField(max_length=30,blank=False)
     numoftruck=models.IntegerField(blank=False)
     shipper=models.ForeignKey('Shipper_info')
+    
+
 
 class Shipper_info(models.Model):
     email=models.EmailField(blank=False,unique=True)
     password =models.CharField(max_length=30,blank=True)
     contact_number=models.BigIntegerField(blank=False)
     email_status=models.BooleanField(default=True,blank=False)
-
+    lat=models.DecimalField(max_digits=12, decimal_places=9,blank=True)
+    lon=models.DecimalField(max_digits=12, decimal_places=9,blank=True)
+    updatelocation=models.BooleanField(default=False)
+    companyname=models.CharField(blank=False,max_length=30)
+    
 class deal(models.Model):
     load_info=models.ForeignKey('load_info')
     Broker_info=models.ForeignKey('Broker_info')

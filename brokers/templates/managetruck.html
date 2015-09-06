@@ -80,7 +80,7 @@
   var currentDistance = [];
     
   
-  var speed = 0.000005, wait = 1;
+  var speed = 0.00000001, wait = 5;
   var infowindow = null;
   
   var myPano;   
@@ -111,7 +111,7 @@ function initialize() {
 
     var myOptions = {
       center:new google.maps.LatLng(28.613939,77.209021),
-      zoom:5,
+      zoom:14,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
@@ -248,7 +248,7 @@ function setRoutes(){
 
     var lastVertex = 1;
     var stepnum=0;
-    var step = 50; // 5; // metres
+    var step = 3; // 5; // metres
     var tick = 100; // milliseconds
     var eol= [];
 //----------------------------------------------------------------------                

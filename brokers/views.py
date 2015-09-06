@@ -4,6 +4,8 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from brokers import utils
 from django.core.mail import send_mail
+import os
+from django.conf import settings
 
 from uploadform import uploadform
 import random
@@ -16,61 +18,28 @@ def home(request):
                   print request
                   fname=request.POST['fname']
                   lname=request.POST['lname']
-                  #address=request.POST['address']
-                  #city=request.POST['city']
+                  city=request.POST['city']
                   state=request.POST['state']
-                  #country=request.POST['country']
-                  pincode=request.POST['pincode']
                   contact_number=request.POST['contact_number']
                   email=request.POST['email']
                   companyname=request.POST['company']
                   password=request.POST['password']
                   crpassword=request.POST['crpassword']
-                  pincode,pincode_error=utils.verify_pincode(pincode)
                   contact_number,cont_error=utils.verify_mobile(contact_number)
                   email,email_error=utils.verify_email(email)
                   pwd,pwd_error=utils.verify_passwords(password,crpassword)
-                  calender=myform()
+                  
                   error=[]
                   if fname=='':
                        error.append("first name is required")
                   if lname=='':
                        error.append("last name is required")
-                  # if address=='':
-                  #      error.append("address  is required")
-                  # if city=='':
-                  #      error.append("city is required")
+                  if city=='':
+                        error.append("city is required")
                   if  state=='':
                         error.append("state is required")
                   if companyname=='':
                        error.append("company name is required")                         
-                  if pincode=='-1':
-                       pincode=''
-                       error.append(pincode_error)
-                  else:
-                       print pincode
-                       pincode=int(pincode)
-                       response1 = urllib2.urlopen('https://www.WhizAPI.com/api/v2/util/ui/in/indian-city-by-postal-code?AppKey=nwbht9wqibmyynjlv3xezyer&pin=%d' %pincode)
-                       try:
-                         temp=json.load(response1)
-                         #print temp
-                         list_city=temp["Data"]
-                         #print " /n"
-                         print list_city
-                         dic=list_city[0]
-                         #print dic
-                        
-
-                         city=dic['City']
-                         #print city
-                         country=dic['Country']
-                         #print country
-                         address=''
-
-                         #state=''
-                         
-                       except: 
-                         error.append("Enter valid pincode")
                   if contact_number=='-1':
                        contact_number=''
                        error.append(cont_error)
@@ -80,13 +49,20 @@ def home(request):
                   if pwd=='-1':
                        pwd=''
                        error.append(pwd_error)
-                  
-                      
                   if not error:
                     var=Broker_info.objects.filter(email=email)
                     if not var:
-                        obj=Broker_info(fname=fname,lname=lname,address=address,city=city,
-                        state=state,country=country,pincode=pincode,contact_number=long(contact_number),email=email,password=password,companyname=companyname)
+                        text = open(os.path.join(settings.MEDIA_ROOT, 'documents/city_detail/latlong.txt'), 'rb')        
+                        lat=72.01
+                        lon=72.03
+                        for line in text:
+                             line=line.rstrip('\n')
+                             lst=line.split(',')
+                             if city==lst[0] and state==lst[3]:
+                                       lat=lst[1] 
+                                       lon=lst[2] 
+                        obj=Broker_info(fname=fname,lname=lname,city=city,
+                        state=state,contact_number=long(contact_number),email=email,password=password,companyname=companyname,lat=lat,lon=lon)
                         obj.save()
                         String = utils.generate_string(size= 10)
                         number= random.randrange (10000,10000000 ,3)
@@ -102,10 +78,10 @@ def home(request):
                         
                         return HttpResponseRedirect('/profile/')
                     else:
-                        return render(request,"home.html",{"fname":fname,"lname":lname,"pincode":pincode,"contact_number":contact_number,"email":email,"companyname":companyname,"error":error,"emailerror":"Email Already exist"})  
+                        return render(request,"home.html",{"fname":fname,"lname":lname,"contact_number":contact_number,"email":email,"companyname":companyname,"error":error,"emailerror":"Email Already exist"})  
                   else:
 
-                     return render(request,"home.html",{"fname":fname,"lname":lname,"pincode":pincode,"contact_number":contact_number,"companyname":companyname,"email":email,"password":password,"error":error})    
+                     return render(request,"home.html",{"fname":fname,"lname":lname,"contact_number":contact_number,"companyname":companyname,"email":email,"password":password,"error":error})    
                 
     elif request.method=="POST" and 'login' in request.POST:
                   try:
@@ -133,15 +109,15 @@ def home(request):
                   except:
                       return render(request,"home.html",{"error":"some login error"}) 
     elif request.method=='POST' and 'query' in request.POST:
-                  source = request.GET['source']
-                  destination = request.GET['destination']
-                  pickupdate=request.GET['pickupdate']
-                  loadtype=request.GET['loadtype']
-                  quantity=request.GET['quantity']
-                  numoftruck=request.GET['numoftruck']
-                  email=request.GET['email']
-                  password =request.GET['password']
-                  contact_number=request.GET['contact_number']
+                  source = request.POST['source']
+                  destination = request.POST['destination']
+                  pickupdate=request.POST['calendervalue']
+                  loadtype=request.POST['loadtype']
+                  quantity=request.POST['quantity']
+                  numoftruck=request.POST['numoftruck']
+                  email=request.POST['email']
+                  password =request.POST['password']
+                  contact_number=request.POST['contact_number']
                   try:
                         temp=Shipper_info.objects.get(email=email)
                         obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
@@ -149,16 +125,26 @@ def home(request):
                         obj.save()
                         return render(request,"home.html",{"error":"Shipper already have account please login by that acccount"})   
                   except:
-                        obj=Shipper_info(email=email,password=password,contact_number=contact_number)
+                        obj=Shipper_info(email=email,password=password,contact_number=contact_number,lat=28.613939,lon=72.0222)
                         obj.save()
                         temp=Shipper_info.objects.get(email=email)              
+                        request.session["uid"] =temp.id
                         obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
                         loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=temp)
                         obj.save()
+
                         return HttpResponseRedirect('/shipperprofile/')
                                                                       
-    else:    
-            return render(request,"home.html")
+    else:   
+            text = open(os.path.join(settings.MEDIA_ROOT, 'documents/city_detail/latlong.txt'), 'rb') 
+            lst=[]
+            for line in text:
+                line=line.rstrip('\n')
+                l=line.split(',')
+                d={"city":l[0],"state":l[3]}
+                lst.append(d)
+            print lst    
+            return render(request,"home.html",{"lst":lst})
 
 def profile(request):
   if request.method=="POST":
@@ -175,39 +161,39 @@ def profile(request):
          print "hello"
          return HttpResponseRedirect("/profile/")
   else:  
-        try: 
+        #try: 
             
           s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
           dic=s.get_decoded()
           b=Broker_info.objects.get(id=dic["uid"])
           if b.email_status and  b.mobile_status:
               email=b.email
-              address=b.address
-              city=b.city
-              state=b.state
-              country=b.country
-               #print 'https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state)
-               
-               #try:
-               #   response1 = urllib2.urlopen('https://api.mapmyindia.com/v3?fun=geocode&lic_key=316sy79cku9swmmmqc7brq6gapznn8s2&q=%s,%s' %(city,state))
-               #   temp=json.load(response1)
-               #    print temp
-               #    dic=temp[0]
-               #    lat=dic['lat']
-               #    lon=dic['lng']          
-                         
-               # except: 
-              lat=28.613939
-              lon=77.209021
-
+              lat=b.lat
+              lon=b.lon
+              location=[]
+              company=b.companyname
               resultset=load_info.objects.all()
-              loadlist=list(resultset)       
-                        
-              return  render(request,"profile.html",{"email":email,"lat":lat,"loadlist":loadlist,"lon":lon})      
+              lolist=list(resultset)
+              loadlist=[]
+
+              for item in lolist:
+                    temp=item.shipper_id
+                    info=Shipper_info.objects.get(id=temp)
+                    loadlist.append((info.companyname,item.source,item.destination,item.pickupdate,item.loadtype,item.numoftruck,item.quantity))
+                    if (info.companyname,info.lat,info.lon) not in location:
+                              lat1=info.lat
+                              location.append((info.companyname,info.lat,info.lon))
+              update=False 
+              if b.updatelocation:
+                 update=True       
+              print location
+              print lat1
+              print lon   
+              return  render(request,"profile.html",{"location":location,"email":email,"company":company,"update":update,"lat":lat,"loadlist":loadlist,"lon":lon})      
           else:
               return  HttpResponse("please verify your account")
-        except:
-              return HttpResponseRedirect('/home/')
+        # except:
+        #       return HttpResponseRedirect('/home/')
 
 def Addtruck(request):
     if request.method=='GET':
@@ -220,9 +206,10 @@ def Addtruck(request):
         b=Broker_info.objects.get(id=dic["uid"])
         if b.email_status and  b.mobile_status:
                 email=b.email
+                company=b.companyname
                 resultset=driver_info.objects.filter(broker_id=b.id)
                 driver_list=list(resultset)
-                return  render(request,"Addtruck.html",{"email":email,"driver_list":driver_list})      
+                return  render(request,"Addtruck.html",{"company":company,"email":email,"driver_list":driver_list})      
                    
         else:
           return  HttpResponse("please verify your account")
@@ -284,7 +271,9 @@ def managetruck(request):
  dic=s.get_decoded() 
  if  request.method=="GET":                  
     
-    email=Broker_info.objects.get(id=dic["uid"]).email
+    b=Broker_info.objects.get(id=dic["uid"])
+    email=b.email
+    company=b.companyname
     result_set=truck_info.objects.filter(broker=dic["uid"] , verify="True")
     truck_set=list(result_set)
     print truck_set
@@ -296,7 +285,7 @@ def managetruck(request):
         i=i+1
     print place    
 
-    return render(request,"managetruck.html",{"email":email,"place":place})
+    return render(request,"managetruck.html",{"company":company,"email":email,"place":place})
  else:
     name=request.POST['driver']
     l=name.split(' ', 1 )
@@ -334,6 +323,9 @@ def shipperProfile(request):
             dic=s.get_decoded()
             b=Shipper_info.objects.get(id= dic["uid"])
             email=b.email
+            update=False  
+            if b.updatelocation:
+                update=True 
             resultset=deal.objects.filter(Shipper_info=dic["uid"])
             list_deal=list(resultset)
             lst=[]
@@ -349,11 +341,70 @@ def shipperProfile(request):
                   lst.append(send)
             print lst 
             lat=28.613939
-            lon=77.209021         
+            lon=77.209021
+            text = open(os.path.join(settings.MEDIA_ROOT, 'documents/city_detail/latlong.txt'), 'rb') 
+            lst1=[]
+            for line in text:
+                line=line.rstrip('\n')
+                l=line.split(',')
+                d={"city":l[0],"state":l[3]}
+                lst1.append(d)
+            print lst1 
+                  
                     
-            return render(request,'shipperprofile.html',{"email":email,"lst":lst,"lat":lat,"lon":lon})
-        
+            return render(request,'shipperprofile.html',{"email":email,"lst":lst,"lst1":lst1,"lat":lat,"lon":lon,"update":update})
+    else:
+        s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
+        dic=s.get_decoded()
+        b=Shipper_info.objects.get(id= dic["uid"])
+        source = request.POST['source']
+        destination = request.POST['destination']
+        pickupdate=request.POST['calendervalue']
+        loadtype=request.POST['loadtype']
+        quantity=request.POST['quantity']
+        numoftruck=request.POST['numoftruck']
+        obj=load_info(source=source,destination=destination,pickupdate=pickupdate,
+        loadtype=loadtype,quantity=quantity,numoftruck=numoftruck,shipper=b)
+        obj.save()
+        return HttpResponseRedirect('/shipperprofile/')
 
+
+
+def updatelocation(request):
+      if request.method=="GET":
+             s=Session.objects.get(session_key=request.COOKIES['sessionid'])
+             dic=s.get_decoded()
+             b=Broker_info.objects.get(id= dic["uid"])
+             lat=b.lat
+             lon=b.lon
+             return render(request,"updatelocation.html",{"lat":lat,"lon":lon})        
+      else:
+          s=Session.objects.get(session_key=request.COOKIES['sessionid'])
+          dic=s.get_decoded()
+          b=Broker_info.objects.get(id= dic["uid"])
+          b.lat=request.POST['lat']
+          b.lon=request.POST['lon']
+          b.updatelocation=True
+          b.save()
+          return HttpResponseRedirect('/profile/')
+
+def updatepickuplocation(request):
+      if request.method=="GET":
+             s=Session.objects.get(session_key=request.COOKIES['sessionid'])
+             dic=s.get_decoded()
+             b=Shipper_info.objects.get(id= dic["uid"])
+             lat=28.613939
+             lon=77.209021
+             return render(request,"updatepickuplocation.html",{"lat":lat,"lon":lon})        
+      else:
+          s=Session.objects.get(session_key=request.COOKIES['sessionid'])
+          dic=s.get_decoded()
+          b=Shipper_info.objects.get(id= dic["uid"])
+          b.lat=request.POST['lat']
+          b.lon=request.POST['lon']
+          b.updatelocation=True
+          b.save()
+          return HttpResponseRedirect('/shipperprofile/')
     
            
 

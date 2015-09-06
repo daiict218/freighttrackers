@@ -32,4 +32,6 @@ urlpatterns = [
     url(r'^managedriver/$',managedriver),
     url(r'^managetruck/$',managetruck),
     url(r'^shipperprofile/$',shipperProfile),
+    url(r'^updatelocation/$',updatelocation),
+    url(r'^updatepickuplocation/$',updatepickuplocation),
 ]

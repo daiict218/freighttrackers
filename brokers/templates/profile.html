@@ -14,32 +14,40 @@
     {% include "navbar.html" %}
 
 </head>
-<body>
-
+<body onload="initialize()">
+{%if not update  %}
+ <div class="alert alert-danger warning col-xs-12" role="alert">
+      Please <a href="/updatelocation/">update</a> your company location so we can easily contact you
+ </div>
+ {%endif%}
  
-<div class="container" id="map-canvas" style="width:1650px;height:900px;align:center;">
-</div>
 
   <!-- You can even embed a Google Form here -->
-
+<div class="col-xs-12-well">  
 <div class=" col-xs-5 well">
+
+
   <div class="list-group ">
     <a class="list-group-item active">
       <h4 class="list-group-item-heading"><b>NEW OFFERS</b></h4>
       
     </a>
-    {%for item in loadlist%}
+    {%for c,s,d,p,l,n,q in loadlist%}
     <table class="table table-hover ">
-  
-      <tr>
-        <td><b>Source:</b>{{item.source}}</td>
-        <td><b>Destination:</b>{{item.destination}}</td>
-        <td><b>Date:</b>{{item.pickupdate}}</td>
+      <tr >
+         <div class="company"><b class="var">{{c}}</b></div>
       </tr>
       <tr>
-        <td><b>Type:</b>{{item.loadtype}}</td>
-        <td><b>Truck:</b>{{item.numoftruck}}</td>
-        <td><b>Quantity:</b>{{item.quantity}}</td>
+        <td><b>Source:</b>{{s}}</td>
+        <td><b>Destination:</b>{{d}}</td>
+        <td><b>Date:</b>{{p}}</td>
+        
+      </tr>
+      <tr>
+        <td><b>Type:</b>{{l}}</td>
+        <td><b>Truck:</b>{{n}}</td>
+        <td><b>Quantity:</b>{{q}}</td>
+        
       </tr>
       
   
@@ -76,14 +84,19 @@
   <br>
     {%endfor%}
   </div>
-</div>
 
+
+</div>
+<div class="col-xs-7  mapspace" id="map-canvas">
+
+
+</div>
 
 
   
 
 
-
+</div>
 </body>
 
 
@@ -91,62 +104,75 @@
 
   // In the following example, markers appear when the user clicks on the map.
   // The markers are stored in an array.
-  // The user can then click an option to hide, show or delete the markers.
-  var map;
-  var markers = [];
-
-  function initialize() {
-    var haightAshbury = new google.maps.LatLng(parseFloat({{lat}}),parseFloat({{lon}}));
-    var mapOptions = {
-      zoom: 12,
-      center: haightAshbury,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById('map-canvas'),
+var map;
+var cordinates = [];
+var temp = []
+{%for c,lt,ln in location%}
+cordinates.push(new google.maps.LatLng({{lt}},{{ln}}));
+temp.push("{{c}} ")
+{%endfor%}
+var position = new google.maps.LatLng(parseFloat({{lat}}),parseFloat({{lon}}));
+var trip=cordinates;
+var markers = [];
+function initialize() {
+  var mapOptions = {
+    zoom: 12,
+    center:cordinates[0],
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
-
-    
-    google.maps.event.addListener(map, 'click', function(event) {
-      addMarker(event.latLng);
-    });
-
-    
-    addMarker(haightAshbury);
+  //infowindowopen(map,marker);
+  //This event listener will call addMarker() when the map is clicked.
+  //google.maps.event.addListener(map, 'click', function(event) {
+   // addMarker(event.latLng);
+  //});
+   addbroker();
+  for(var i=0;i<trip.length;i++){
+    addMarker(trip[i],i);
   }
+  // Adds a marker at the center of the map.
+  //addMarker(haightAshbury);
+}
 
-
-  function addMarker(location) {
-   clearMarkers();
-   markers = [];
-   var marker = new google.maps.Marker({
+function addbroker(){
+  var iconBase = "{%static "img/a.png"%}";
+  var marker = new google.maps.Marker({
+    position: position,
+    map: map,
+    icon: iconBase
+  });
+  var infowindow = new google.maps.InfoWindow({
+    content:"{{company}}"
+  });
+  infowindow.open(map,marker);
+  marker.setMap(map);
+}
+// Add a marker to the map and push to the array.
+function addMarker(location,i) {
+  var iconBase = "{%static "img/letter_c.png"%}";
+  var marker = new google.maps.Marker({
     position: location,
-    map: map
+    map: map,
+    icon: iconBase
   });
-   markers.push(marker);
-   document.getElementById("lat").value = location.lat();
-   document.getElementById("long").value = location.lng();
-
-
-   var infowindow = new google.maps.InfoWindow({
-    content: "<b>{{fname}}</b>" 
+  var infowindow = new google.maps.InfoWindow({
+    content: temp[i]
   });
-   infowindow.open(map,marker);
- }
-
-
- function setAllMap(map) {
+  infowindow.open(map,marker);
+  markers.push(marker);
+}
+// Sets the map on all markers in the array.
+function setAllMap(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
   }
 }
 
 
-function clearMarkers() {
-  setAllMap(null);
-}
 
 
-google.maps.event.addDomListener(window, 'load', initialize);
+
 
 function message(){
   alert("We will contact you soon")
