@@ -322,7 +322,10 @@ def shipperProfile(request):
             s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
             dic=s.get_decoded()
             b=Shipper_info.objects.get(id= dic["uid"])
+            latitude=b.lat
+            longitude=b.lon
             email=b.email
+            company=b.companyname
             update=False  
             if b.updatelocation:
                 update=True 
@@ -336,8 +339,8 @@ def shipperProfile(request):
                   s=load_info.objects.get(id=load)
                   b=item.Broker_info_id
                   broker=Broker_info.objects.get(id=b)
-                  send={"id":item.id,"source":s.source,"destination":s.destination,"pickupdate":s.pickupdate,"loadtype":s.loadtype,
-                  "quantity":s.quantity,"numoftruck":int(s.numoftruck),"cost":item.cost,"companyname":broker.companyname}
+                  send={"rating":broker.rating,"id":item.id,"source":s.source,"destination":s.destination,"pickupdate":s.pickupdate,"loadtype":s.loadtype,
+                  "quantity":s.quantity,"numoftruck":int(s.numoftruck),"cost":item.cost,"companyname":broker.companyname,"lat":broker.lat,"lon":broker.lon}
                   lst.append(send)
             print lst 
             lat=28.613939
@@ -352,7 +355,7 @@ def shipperProfile(request):
             print lst1 
                   
                     
-            return render(request,'shipperprofile.html',{"email":email,"lst":lst,"lst1":lst1,"lat":lat,"lon":lon,"update":update})
+            return render(request,'shipperprofile.html',{"company":company,"lat":latitude,"lon":longitude,"email":email,"lst":lst,"lst1":lst1,"lat":lat,"lon":lon,"update":update})
     else:
         s=Session.objects.get(session_key=request.COOKIES["sessionid"])    
         dic=s.get_decoded()

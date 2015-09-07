@@ -31,16 +31,17 @@
          <li><a href="/notification/">Notification</a></li>
          <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <b>{{email}}</b><b class="caret"></b>
+                <b>{{company}}</b><b class="caret"></b>
             </a>
             <ul class="dropdown-menu">
                <li><a href="#">view</a></li>
                <li><a href="#">edit</a></li>
                <li><a href="#">Transaction</a></li>
                <li><a href="#">Documents</a></li>
+               <li ><a href="/logout/">Logout</a></li>
             </ul>
          </li>
-         <li ><a href="/logout/">Logout</a></li>
+         
 
       </ul>
    </div>
@@ -79,9 +80,7 @@
              <div class="col-sm-4">
                 <div class="input-group add-on col-sm-3 date datepicker" data-date-format="yyyy-mm-dd">
                        <input name="calendervalue" placeholder="Pick up date" id="calendervalue" value="" class="form-control date-picker" data-date-format="yyyy-mm-dd" type="text">
-                    <div class="input-group-btn calbtn col-sm-1">
-                       <button class="btn" id="calButton" onclick="loadcalender()"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </div>
+                    
                      
                </div>
                <div id="calender" class="cal">
@@ -142,6 +141,7 @@
         <th>Load Detail</th>
         <th>Comapny</th>
         <th>Cost</th>
+        <th>Rating</th>
       </tr>
     </thead>
     <tbody>
@@ -150,6 +150,17 @@
         <td><button class=" setbtn1 btn btn-primary" data-toggle="modal" data-target="#loadid{{item.id}}" >Load</button></td>
         <td>{{item.companyname}}</td>
         <td>{{item.cost}}</td>
+        {%if item.rating == 1%}
+        <td><img src="{%static "img/star1.png"%}"></td>
+        {%elif item.rating == 2%}
+        <td><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"></td>
+        {%elif item.rating == 3%}
+        <td><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"></td>
+        {%elif item.rating == 4%}
+        <td><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"></td>
+        {%else%}
+        <td><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"><img src="{%static "img/star1.png"%}"></td>
+        {%endif%}
         <td><button class="setbtn1 btn btn-success" onclick="requestaccept()">Accept</button></td>
       </tr>
       <div class="modal fade" id="loadid{{item.id}}" role="dialog">
@@ -207,57 +218,69 @@ function quote(){
   
   // The markers are stored in an array.
   // The user can then click an option to hide, show or delete the markers.
-  var map;
-  var markers = [];
-
-  function initialize() {
-    var haightAshbury = new google.maps.LatLng(parseFloat({{lat}}),parseFloat({{lon}}));
-    var mapOptions = {
-      zoom: 12,
-      center: haightAshbury,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById('map-canvas1'),
+ var map;
+var cordinates = [];
+var temp = []
+{%for item in lst%}
+cordinates.push(new google.maps.LatLng({{item.lat}},{{item.lon}}));
+temp.push("{{item.companyname}} ")
+{%endfor%}
+var position = new google.maps.LatLng(parseFloat({{lat}}),parseFloat({{lon}}));
+var trip=cordinates;
+var markers = [];
+function initialize() {
+  var mapOptions = {
+    zoom: 12,
+    center:cordinates[0],
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas1'),
       mapOptions);
-
-    
-    google.maps.event.addListener(map, 'click', function(event) {
-      addMarker(event.latLng);
-    });
-
-    
-    addMarker(haightAshbury);
+  //infowindowopen(map,marker);
+  //This event listener will call addMarker() when the map is clicked.
+  //google.maps.event.addListener(map, 'click', function(event) {
+   // addMarker(event.latLng);
+  //});
+   addcompany();
+  for(var i=0;i<trip.length;i++){
+    addMarker(trip[i],i);
   }
+  // Adds a marker at the center of the map.
+  //addMarker(haightAshbury);
+}
 
-
-  function addMarker(location) {
-   clearMarkers();
-   markers = [];
-   var marker = new google.maps.Marker({
+function addcompany(){
+  var iconBase = "{%static "img/C.png"%}";
+  var marker = new google.maps.Marker({
+    position: position,
+    map: map,
+    icon: iconBase
+  });
+  var infowindow = new google.maps.InfoWindow({
+    content:"{{company}}"
+  });
+  infowindow.open(map,marker);
+  marker.setMap(map);
+}
+// Add a marker to the map and push to the array.
+function addMarker(location,i) {
+  var iconBase = "{%static "img/T.png"%}";
+  var marker = new google.maps.Marker({
     position: location,
-    map: map
+    map: map,
+    icon: iconBase
   });
-   markers.push(marker);
-   document.getElementById("lat").value = location.lat();
-   document.getElementById("long").value = location.lng();
-
-
-   var infowindow = new google.maps.InfoWindow({
-    content: "<b>{{fname}}</b>" 
+  var infowindow = new google.maps.InfoWindow({
+    content: temp[i]
   });
-   infowindow.open(map,marker);
- }
-
-
- function setAllMap(map) {
+  infowindow.open(map,marker);
+  markers.push(marker);
+}
+// Sets the map on all markers in the array.
+function setAllMap(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
   }
-}
-
-
-function clearMarkers() {
-  setAllMap(null);
 }
 
 
@@ -281,4 +304,19 @@ function loadcalender(){
   $("#calButton").click(function(){
     $("#calender").toggle();
   });
+  $.fn.stars = function() {
+    return $(this).each(function() {
+        // Get the value
+        var val = parseFloat($(this).html());
+        // Make sure that the value is in 0 - 5 range, multiply to get width
+        var size = Math.max(0, (Math.min(5, val))) * 16;
+        // Create stars holder
+        var $span = $('<span />').width(size);
+        // Replace the numerical value with stars
+        $(this).html($span);
+    });
+}
+$(function() {
+    $('span.stars').stars();
+});
 </script>

@@ -20,18 +20,26 @@
 <body onload="initialize()">
   
     <div class="row">
-         <div class="col-xs-10">
+         <div class="col-xs-6">
          </div>
          <div class="col-xs-2">
             <a href="/addtruck/" role="button" class="btn btn-success btn-large btn-block">ADD TRUCK</a>
-         </div>  
+         </div> 
+          <div class="col-xs-2 show">   
+             <button type="button" class="btn btn-primary btn-block one" onclick="showtruck(-1)">SHOW INFO</button>
+          </div>
+ <div class="col-xs-2 hd">   
+ <button type="button" class="btn btn-danger btn-block two" onclick="Hideinfo()">HIDE INFO</button>
+ </div>
+        
+          
     </div>    
 <div class="col-xs-3"> <!-- required for floating -->
     <!-- Nav tabs -->
- <button type="button" class="btn btn-primary btn-block" onclick="showtruck(-1)">ALL</button>
- <br>
+
+ 
     {% for a,b,c,d,e in place%}
-       <button type="button" class="btn btn-primary btn-block" data-toggle="collapse" data-target='#demo{{a.id}}' onclick="showtruck({{ a.id}})">{{a.state}}:{{a.rto}}:{{a.numberone}}:{{a.numbertwo}}</button>
+       <button type="button" class="btn btn-primary btn-block three" data-toggle="collapse" data-target='#demo{{a.id}}' onclick="showtruck({{ a.id}})">{{a.state}}:{{a.rto}}:{{a.numberone}}:{{a.numbertwo}}</button>
        <div id='demo{{a.id}}' class="collapse ">
          
           <table class="table table-responsive ">
@@ -50,14 +58,14 @@
         
       </div>
 
-      <br>
+      
     {% endfor %}    
 
 </div>
 
 
 <div class="col-xs-9">
-     <div class="container" id="map_canvas" style="width:1300px;height:700px;align:center;"></div>
+     <div class="container" id="map_canvas" style="width:1210px;height:700px;align:center;"></div>
 </div>
   
 </body>
@@ -141,7 +149,7 @@ function createMarker(latlng, label, html,icon) {
        infowindow[label] = new google.maps.InfoWindow({
       content: contentString
   });
-    infowindow[label].open(map,marker);
+    //infowindow[label].open(map,marker);
     return marker;
 }  
 
@@ -332,6 +340,15 @@ function showtruck(num){
         
      }
    }
+}
+function Hideinfo(){
+ 
+     
+     for(x=0;x<marker.length;x++){
+        
+          infowindow[x].close(map,marker[x]);
+        }
+        
 }
 
 function deletetruck(){

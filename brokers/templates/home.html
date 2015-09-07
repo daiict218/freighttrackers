@@ -1,413 +1,356 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 {% load staticfiles %}
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}"  />
-    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.min.css"%}"/>
-    
-    <link rel='stylesheet' type='text/css' href="{% static "css/jquery.bxslider.css"%}"/>
-    
-    <link rel='stylesheet' type='text/css' href="{% static "css/jsDatePick_ltr.min.css"%}"/>
+<head>
+    <meta charset="UTF-8">
+    <title>FREIGHTTRACKERS</title>
+    <link rel='stylesheet' type='text/css' href="{% static "Bootstrap/css/bootstrap.css" %}" />
+    <link rel='stylesheet' type='text/css' href="{% static "css/datepicker_jqui.css"%}"/>
+    <link rel="stylesheet" type="text/css" href="{%static "css/stylesheet.css"%}">
+    <link rel="stylesheet" type="text/css" href="{%static  "css/normalize.css"%}">
+    <link href="http://fonts.googleapis.com/css?family=Extra-Light 200&subset=latin,latin-ext" rel="stylesheet" type="text/css">
     <link rel='stylesheet' type='text/css' href="{% static "css/default.css"%}"/>
+</head>
+<body>
+    <section class="jumbotron jumbotron__img--home head">
+        <header class="header">
+          <div class="header__container">
+              <a href="index.html" class="navbar__menu--logo">
+                <b>FRIGHTTRACKERS</b>
+              </a>
+              <nav class="header__nav">
+                    <button data-toggle="modal" data-target="#shipperloginModal" name="shipperlogin" value="True" class="navbar__signin">Shipper</button>
+                    <button data-toggle="modal" data-target="#loginModal"  class="navbar__signin">Sign in</button>
+                    <button data-toggle="modal" data-target="#signupModal" class="navbar__signin brokersignup">Sign Up</button>
+               </nav>
+          </div>
+        </header>
+        <div class="jumbotron__container">
+            <h1 class="jumbotron__header">TRACK YOUR FREIGHT  ANYTIME</h1>
+                <p style="font-size:40px">EASY &nbsp &nbsp <span>FAST &nbsp &nbsp</span>   <span id="typed" style="color:red"></span><p>
+                  
+                     
+            <div class="multistepform">            
+                  <form  action="/home/" method ="POST">
+                      {% csrf_token%}
+                           <fieldset id="first">
+                              <div class="form-group col-sm-12 height">
+                                        <div class="col-sm-3">
+                                             <select type="text" class="form-control" placeholder="FROM" name="source" id="source" required >
+                                                      <option disabled selected>FROM</option>
+                                                     {% for item in lst%}
+                                                       <option value="{{item.city}}">{{item.city}}</option>
+                                                     {%endfor%}
+                                              </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                                <select type="text" class="form-control" placeholder="To" name="destination" id="destination" required >
+                                                        <option disabled selected>TO</option>
+                                                       {% for item in lst%}
+                                                         <option value="{{item.city}}">{{item.city}}</option>
+                                                       {%endfor%}
+                                                </select>
+                                        </div>
+                                       <div class="col-sm-3">
+                                          <div class="input-group add-on col-sm-2 date datepicker " data-date-format="yyyy-mm-dd">
+                                                 <input name="date_B"  placeholder="PICKUP DATE"class="form-control date demo_jqui calin">
+                                              
+                                         </div>
+                                      </div>
+                                      <div class="col-sm-1" >
+                                         <input type="button"style="background-color: #EC2828; width: 100px;" id="next_btn1" value="Next" onclick="next_step1()" />
+                                      </div> 
+                                </div>
+                             </fieldset>
+                             <fieldset id="second">
+                                <div class="form-group col-sm-12 height">
+                                        <div class="col-sm-4">
+                                          <select  class="form-control" name="loadtype" placeholder="Load Type" required value={{loadtype}}>
+                                            <option disabled selected>Load Type</option>
+                                           <option >Container</option>
+                                           <option >Coal And Ash</option>
+                                           <option >Fruts And vegitable</option>
+                                           <option >Liquid and oil</option>
+                                           <option >Chemicles</option>
+                                           <option >Machinery</option>
+                                           <option >textiles</option>
+                                           <option >Vehicles part</option>
+                                          </select> 
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <Select  class="form-control" name="quantity" placeholder="Quantity" required value={{quantity}}>
+                                          <option disabled selected>Quantity(Tones)</option>
+                                           <option >1-3</option>
+                                           <option >4-6</option>
+                                           <option >7-10</option>
+                                           <option >11-15</option>
+                                           <option >16-20</option>
+                                           <option >17-21</option>
+                                           <option >22-25</option>
+                                           <option>25-35</option>
+                                          </select> 
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <Select  class="form-control" name="numoftruck" required value={{trucknum}}>
+                                          <option disabled selected>Number of Trucks</option>
+                                           <option >1</option>
+                                           <option >2</option>
+                                           <option >3</option>
+                                           <option >4</option>
+                                           <option >5</option>
+                                           <option >6</option>
+                                           <option >7</option>
+                                           <option>8</option>
+                                          </select>
+                                        </div>
+                                </div>
+                                  <input type="button" id="pre_btn1" value="Previous" style="background-color: #EC2828; width: 100px;" onclick="prev_step1()"/>
+                                  <input type="button" name="next" id="next_btn2" style="background-color: #EC2828; width: 100px;" value="Next" onclick="next_step2()" />
+                            </fieldset>
+                            <fieldset id="third">
+                              <div class="form-group col-sm-12 height">
+                                        <div class="col-sm-4">
+                                         <input type="text" class="form-control"  name="email"  placeholder="Email" required value={{email}} >
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <input type="text" class="form-control" name="password" placeholder="Password" required value={{password}}>
+                                        </div>
+                                        <div class="col-sm-4">
+                                          <input type="text" class="form-control" name="contact_number" placeholder="Contact number" required value={{contact}}>
+                                        </div>
+                              <input type="button" style="background-color: #EC2828; margin-top: 28px;
+                              margin-left: 14px; width:100px;"  id="pre_btn2" value="Previous" onclick="prev_step2()"/>
+                              <input type="submit" name='query' class="submit_btn" style="background-color: #9A989F; ; margin-top: 28px;
+                               margin-left: 14px;width:100px;"value="Query"/>
+                              </div>
+                            </fieldset>
+                </form>
+             </div>
+        </div>
+    </section>
 
+    <!-- Sign in button model -->
+    <div class="container">
+      <div class="modal fade" id="loginModal" role="dialog">
+         <div class="modal-dialog">
+    
+      <!-- Modal content-->
+               <div class="modal-content">
+                    <div class="modal-body">
+            
+                       <h1 class="text-muted">User login</h1>
+                       <hr/>
+                       <form action="/home/" method="POST">
+                          {%csrf_token%}
+                        <div class="form-group">
+                           <label for="emailField">Email address</label>
+                            <input type="email" class="form-control i" id="emailField" placeholder="Enter email" required name="email" value={{email}}>
+                        </div>
 
-  </head>
-  <body>
-  	<div class="jumbotron" >
-       <div class="container" >
-      
-      			<a class="navbar-brand" ><b>Freighttrackers</b></a>
-    			  <ul class="nav navbar-nav navbar-right">
-        				 <li><button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#signupModal" href="#signupModel"><span class="glyphicon glyphicon-user"></span> Sign Up</button></li>
+                        <div class="form-group">
+                          <label for="passwordField">Password</label>
+                        <input type="password" class="form-control " id="passwordField" placeholder="Enter password" required name="password">
+                        </div>
 
-        				<li><button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#loginModal" name="login" value="True"><span class="glyphicon glyphicon-log-in"></span> Log in</button></li>
-                
-     				 </ul>
-             <div class="element"></div>
-<div class="multistepform">            
+                        
 
-<form  action="/home/" method ="POST">
-  <!-- progressbar -->
-  {% csrf_token%}
-  
-  
-  <!-- fieldsets -->
-  <fieldset id="first">
-           
-    <div class="form-group col-sm-12">
-              <div class="col-sm-3">
-               <select type="text" class="form-control" placeholder="FROM" name="source" id="source" required >
-                        <option disabled selected>FROM</option>
-                       {% for item in lst%}
-                         <option value="{{item.city}}">{{item.city}}</option>
-                       {%endfor%}
-                </select>
-              </div>
-              <div class="col-sm-3">
-                <select type="text" class="form-control" placeholder="To" name="destination" id="destination" required >
-                        <option disabled selected>TO</option>
-                       {% for item in lst%}
-                         <option value="{{item.city}}">{{item.city}}</option>
-                       {%endfor%}
-                </select>
-              </div>
-             <div class="col-sm-4">
-                <div class="input-group add-on col-sm-2 date datepicker" data-date-format="yyyy-mm-dd">
-                       <input name="calendervalue" id="calendervalue" placeholder="PICKUP DATE" value="" class="form-control date-picker" data-date-format="yyyy-mm-dd" type="text" required>
-                    <div class="input-group-btn">
-                       <button class="btn" id = "calButton" onclick="loadcalender()"><i class="glyphicon glyphicon-calendar"></i></button>
+                        <button type="submit" class="btn btn-success" name="login" value="True">Login</button>
+                        </form>
                     </div>
-                    <div id="calender">
+       
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+              </div>
+      
+            </div>
+      </div>
+</div>
+<div class="container">
+    <div class="modal fade" id="signupModal" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-body">
+              <h3 class="text-muted">Register</h3>
+              <hr/>
+          <form role="form" class="form-horizontal" action="/home/" method="POST">
+            {% csrf_token %}
+              <div class="form-group">
+                  <div class="col-sm-5"><label>First name</label>
+                  <input type="text" class="form-control"  name="fname"  placeholder="First Name" required value={{fname}} >
+                  </div>
+                        <div class="col-sm-5"><label>Last name</label><input type="text" class="form-control" name="lname" placeholder="Last Name" required value={{lname}}>
+                        </div>
+              </div>
+              <div class="form-group">
+                  <label class="col-sm-5">Email</label>
+                        <div class="col-sm-10"><input type="email" class="form-control" id="inputEmail1" placeholder="Email" name="email" required value={{email}}>
+                        </div>
+              </div>
+              <div class="form-group">
+                        <label  class="col-sm-5">Password</label>
+                        <div class="col-sm-10"><input type="password" class="form-control" id="inputPassword1" required name="password" placeholder="Password">
+                        </div>
+              </div>
+              <div class="form-group">
+                        <label class="col-sm-5" >reenter password</label>
+                        <div class="col-sm-10"><input type="password" class="form-control" id="inputPassword1"  required name="crpassword" placeholder="reenter password">
+                        </div>
+              </div>
+              <div class="form-group">
+                  <div class="col-sm-5"><label >Company name</label>
+                   <input type="text" class="form-control" placeholder="Company Name" required name="company" value={{companyname}}>
+                  </div>
+                  <div class="col-sm-5"> <label >Phone number</label>
+                       
+                        <input type="text" class="form-control" placeholder="contact Number" name="contact_number" required value={{contact_number}}>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <div class="col-sm-5"><label>State</label><select type="text" class="form-control" name="state" placeholder="State Name" id="state" required value={{state}}>
+                       <option value="Delhi">Delhi</option>
+                       <option value="Gujarat">Gujarat</option>
+                       <!-- <option>Rajasthan</option>
+                       <option>Andra Pradesh</option>
+                       <option>Arunachal Pradesh</option>
+                       <option>Assam</option>
+                       <option>Bihar</option>
+                       <option>Chhattisgarh</option>
+                       <option>Goa</option>
+                       <option>Gujarat</option>
+                       <option>Himachal Pradesh</option>
+                       <option>Haryana</option>
+                       <option>Jammu and Kashmir</option>
+                       <option>Jharkhand</option>
+                       <option>Karnataka</option>
+                       <option>Kerala</option>
+                       <option>Madya Pradesh</option>
+                       <option>Maharashtra</option>
+                       <option>Nagaland</option>
+                       <option>Orissa</option>
+                       <option>Punjab</option>
+                       <option>Sikkim</option>
+                      <option>Tamil Nadu</option>
+                      <option>Tripura</option>
+                      <option>Uttaranchal</option>
+                      <option>Uttar Pradesh</option>
+                      <option>West Bengal</option> -->
+                       </select>
                     </div> 
-               </div>
-             </div>  
-              <div class="col-sm-2">
-               <input type="button" id="next_btn1" value="Next" onclick="next_step1()" />
-              </div> 
 
 
-    </div>
-     <button type="button" class="btn btn-primary btn-lg shipperbtn" data-toggle="modal" data-target="#shipperloginModal" name="shipperlogin" value="True"><span class="glyphicon glyphicon-log-in"></span> Shipper Login</button>
-    
-  </fieldset>
-  <fieldset id="second">
-    <div class="form-group col-sm-12">
-              <div class="col-sm-4">
-                <select  class="form-control" name="loadtype" placeholder="Load Type" required value={{loadtype}}>
-                  <option disabled selected>Load Type</option>
-                 <option >Container</option>
-                 <option >Coal And Ash</option>
-                 <option >Fruts And vegitable</option>
-                 <option >Liquid and oil</option>
-                 <option >Chemicles</option>
-                 <option >Machinery</option>
-                 <option >textiles</option>
-                 <option >Vehicles part</option>
-                </select> 
-              </div>
-              <div class="col-sm-4">
-                <Select  class="form-control" name="quantity" placeholder="Quantity" required value={{quantity}}>
-                <option disabled selected>Quantity(Tones)</option>
-                 <option >1-3</option>
-                 <option >4-6</option>
-                 <option >7-10</option>
-                 <option >11-15</option>
-                 <option >16-20</option>
-                 <option >17-21</option>
-                 <option >22-25</option>
-                 <option>25-35</option>
-                </select> 
-              </div>
-              
-              <div class="col-sm-4">
-                <Select  class="form-control" name="numoftruck" required value={{trucknum}}>
-                <option disabled selected>Number of Trucks</option>
-                 <option >1</option>
-                 <option >2</option>
-                 <option >3</option>
-                 <option >4</option>
-                 <option >5</option>
-                 <option >6</option>
-                 <option >7</option>
-                 <option>8</option>
-                </select>
-              </div>
-               
-    </div>
-    <input type="button" id="pre_btn1" value="Previous" onclick="prev_step1()"/>
-    <input type="button" name="next" id="next_btn2" value="Next" onclick="next_step2()" />
-  </fieldset>
-  <fieldset id="third">
-    <div class="form-group col-sm-12">
-              <div class="col-sm-4">
-               <input type="text" class="form-control"  name="email"  placeholder="Email" required value={{email}} >
-              </div>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" name="password" placeholder="Password" required value={{password}}>
-              </div>
-              <div class="col-sm-4">
-                <input type="text" class="form-control" name="contact_number" placeholder="Contact number" required value={{contact}}>
-              </div>
-    <input type="button" id="pre_btn2" value="Previous" onclick="prev_step2()"/>
-    <input type="submit" name='query' class="submit_btn" value="Query"/>
-  </div>
-  </fieldset>
-</form>
-</div>
-</div>
-
-		  	
-    
- 
-  <!-- Trigger the modal with a button -->
- 
-
-  <!-- sign up Modal -->
-  <div class="modal fade" id="signupModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-body">
-        	<h3 class="text-muted">Register</h3>
-					<hr/>
-			<form role="form" class="form-horizontal" action="/home/" method="POST">
-				{% csrf_token %}
-    			<div class="form-group">
-        			<div class="col-sm-5"><label>First name</label>
-        			<input type="text" class="form-control"  name="fname"  placeholder="First Name" required value={{fname}} >
-        			</div>
-                    <div class="col-sm-5"><label>Last name</label><input type="text" class="form-control" name="lname" placeholder="Last Name" required value={{lname}}>
-                    </div>
-          </div>
-    			<div class="form-group">
-        			<label class="col-sm-5">Email</label>
-                    <div class="col-sm-10"><input type="email" class="form-control" id="inputEmail1" placeholder="Email" name="email" required value={{email}}>
-                    </div>
-          </div>
-          <div class="form-group">
-                    <label  class="col-sm-5">Password</label>
-                    <div class="col-sm-10"><input type="password" class="form-control" id="inputPassword1" required name="password" placeholder="Password">
-                    </div>
-          </div>
-          <div class="form-group">
-                    <label class="col-sm-5" >reenter password</label>
-                    <div class="col-sm-10"><input type="password" class="form-control" id="inputPassword1"  required name="crpassword" placeholder="reenter password">
-                    </div>
-          </div>
-          <div class="form-group">
-        			<div class="col-sm-5"><label >Company name</label>
-        			 <input type="text" class="form-control" placeholder="Company Name" required name="company" value={{companyname}}>
-        		  </div>
-              <div class="col-sm-5"> <label >Phone number</label>
+                    <div class="col-sm-5">
                    
-                    <input type="text" class="form-control" placeholder="contact Number" name="contact_number" required value={{contact_number}}>
-              </div>
-          </div>
-          <div class="form-group">
-              <div class="col-sm-5"><label>State</label><select type="text" class="form-control" name="state" placeholder="State Name" id="state" required value={{state}}>
-                   <option value="Delhi">Delhi</option>
-                   <option value="Gujarat">Gujarat</option>
-                   <!-- <option>Rajasthan</option>
-                   <option>Andra Pradesh</option>
-                   <option>Arunachal Pradesh</option>
-                   <option>Assam</option>
-                   <option>Bihar</option>
-                   <option>Chhattisgarh</option>
-                   <option>Goa</option>
-                   <option>Gujarat</option>
-                   <option>Himachal Pradesh</option>
-                   <option>Haryana</option>
-                   <option>Jammu and Kashmir</option>
-                   <option>Jharkhand</option>
-                   <option>Karnataka</option>
-                   <option>Kerala</option>
-                   <option>Madya Pradesh</option>
-                   <option>Maharashtra</option>
-                   <option>Nagaland</option>
-                   <option>Orissa</option>
-                   <option>Punjab</option>
-                   <option>Sikkim</option>
-                  <option>Tamil Nadu</option>
-                  <option>Tripura</option>
-                  <option>Uttaranchal</option>
-                  <option>Uttar Pradesh</option>
-                  <option>West Bengal</option> -->
-                   </select>
-                </div> 
+                        <label >City</label>
+                       
+                        <select type="text" class="form-control" placeholder="City" name="city" id="city" required >
+                           {% for item in lst%}
+                             
 
-
-                <div class="col-sm-5">
-               
-                    <label >City</label>
-                   
-                   	<select type="text" class="form-control" placeholder="City" name="city" id="city" required >
-                       {% for item in lst%}
-                         
-
-                       <option id="{{item.state}}" value="{{item.city}}">{{item.city}}</option>
-                       {%endfor%}
-                    </select>  
+                           <option id="{{item.state}}" value="{{item.city}}">{{item.city}}</option>
+                           {%endfor%}
+                        </select>  
+                    </div>
                 </div>
+                   <div class="form-group">
+                        <div class="col-sm-6">
+                           <button name="signup" type="submit" class="btn btn-info pull-right" value="True">Submit</button>
+                        </div>
+                   </div>
+              </form>
+              {%for item in error%}
+               {{item}}
+               {%endfor%}
+        </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
-               <div class="form-group">
-                    <div class="col-sm-6">
-                       <button name="signup" type="submit" class="btn btn-info pull-right" value="True">Submit</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="container">
+    <div class="modal fade" id="shipperloginModal" role="dialog">
+        <div class="modal-dialog">
+        
+          <!-- Modal content-->
+          <div class="modal-content">
+                <div class="modal-body">
+                    
+                  <h1 class="text-muted">Shipper login</h1>
+                  <hr/>
+                  <form action="/home/" method="POST">
+                    {%csrf_token%}
+                    <div class="form-group">
+                          <label for="emailField">Email address</label>
+                        <input type="email" class="form-control i" name="shipperemail" id="emailField" placeholder="Enter email" required name="email" value={{email}}>
                     </div>
-               </div>
-      		</form>
-      		{%for item in error%}
-      		 {{item}}
-      		 {%endfor%}
-		</div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <div class="form-group">
+                          <label for="passwordField">Password</label>
+                        <input type="password" class="form-control " name="shipperpassword" id="passwordField" placeholder="Enter password" required name="password">
+                    </div>
+                        <button type="submit" class="btn btn-success" name="shipperlogin" value="True">Login</btn-defaultutton>
+                  </form>
+                </div>
+               
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+          </div>
+          
         </div>
     </div>
-  </div>
 </div>
-<div class="modal fade" id="loginModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-body">
-            
-					<h1 class="text-muted">User login</h1>
-					<hr/>
-    			<form action="/home/" method="POST">
-    				{%csrf_token%}
-    				<div class="form-group">
-    					<label for="emailField">Email address</label>
-						<input type="email" class="form-control i" id="emailField" placeholder="Enter email" required name="email" value={{email}}>
-    				</div>
-
-    				<div class="form-group">
-    					<label for="passwordField">Password</label>
-						<input type="password" class="form-control " id="passwordField" placeholder="Enter password" required name="password">
-    				</div>
-
-    				
-
-    				<button type="submit" class="btn btn-success" name="login" value="True">Login</button>
-    			</form>
-		</div>
-       
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
       
-    </div>
-  </div>
-</div> 
-
-<div class="modal fade" id="shipperloginModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-body">
+<section class="work-process">
+      <div class="work-process__container">
+          <p class="work-process__header" >How it works?</p>
+          <ul class="work-process__image">
+            <li class="work-process__list"><img src="{%static "img/regicon.PNG" %}"><p class="work-process__name">Get Register</p></li>
+            <li class="work-process__list" style="margin-left:-5px;"><img src="{%static "img/shipicon.png" %}"><p class="work-process__name">Get Shipment</p></li>
+            <li class="work-process__list" style="margin-left:-5px;"><img src="{%static "img/traceicon.png" %}"><p class="work-process__name">Trace Shipment</p></li>
             
-          <h1 class="text-muted">Shipper login</h1>
-          <hr/>
-          <form action="/home/" method="POST">
-            {%csrf_token%}
-            <div class="form-group">
-              <label for="emailField">Email address</label>
-            <input type="email" class="form-control i" name="shipperemail" id="emailField" placeholder="Enter email" required name="email" value={{email}}>
-            </div>
-
-            <div class="form-group">
-              <label for="passwordField">Password</label>
-            <input type="password" class="form-control " name="shipperpassword" id="passwordField" placeholder="Enter password" required name="password">
-            </div>
-
-            
-
-            <button type="submit" class="btn btn-success" name="shipperlogin" value="True">Login</button>
-          </form>
-    </div>
-       
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </ul>
         </div>
-      </div>
-      
-    </div>
-  </div>
-</div> 
-<div class="carosalslider slider4 " >
-  <div class="slide"><img src="{% static "img/truck1.jpg" %}"></div>
-  <div class="slide"><img src="{% static "img/truck1.jpg" %}"></div>
-  <div class="slide"><img src="{% static "img/truck1.jpg" %}"></div>
-  <div class="slide"><img src="{% static "img/truck1.jpg" %}"></div>
-  <div class="slide"><img src="{% static "img/truck1.jpg" %}"></div>
-  <div class="slide"><img src="{% static "img/truck1.jpg" %}"></div>  
+</section>
+   
+    <footer class="footer">
+      <div class="footer__container">
+        <ul class="footer__ul">
+          <li class="footer__list"><span class="footer__copyright">Prototype of Freighttrackers</sapn></li>
+          
+         </ul>
+     </div>
+    </footer>  
   
   
-</div>
-
-
-     <div class="panel-footer footer">Panel Footer</div> 
-
-     <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
-    <script src="{% static "Bootstrap/js/bootstrap.js" %}"></script>
-    <script src="{% static "js/typed.js" %}"></script>
-    <script src="{% static "js/typed.min.js"%}"></script>
-    <script src="{% static "js/multi_step_form.js"%}"></script>
-    <script src="{% static "js/jsDatePick.min.1.3.js"%}"></script>
-    <script src="{% static "js/jquery.bxslider.min.js"%}"></script>    
-
-  </body>
-
-<script>
-  $(function(){
-      $(".element").typed({
-        strings: ["Want to ship your freight?", "Easiest way to track your load" , "We are here to HELP YOU :)"],
-   typeSpeed: 30,
-   backSpeed: 10,
-   backDelay: 1000,
-   loop: false,
+  
+  
+  <script src="{% static "Bootstrap/js/jquery.min.js" %}"></script>
+  <script src="{% static "Bootstrap/js/bootstrap.js" %}"></script>
+  <script src="{% static "js/multi_step_form.js"%}"></script>
+  <script src="{% static "js/datepicker.js"%}"></script>
+  <script type="text/javascript" src="{%static "js/jquery-1.11.0.min.js"%}"></script>
+  <script src="{% static "js/typed.js"%}"></script>
+  <script>
+     (function(){
+$("#typed").typed({
+   strings: ["RELIABLE","TRACEABLE"],
+   typeSpeed: 100,
+   backSpeed: 20,
+   backDelay: 5000,
+   loop: true,
    loopCount: false,
-   stopnum:4,
-
-      });
-  });
-</script>
-<script type="text/javascript">2
-function loadcalender(){
-    g_globalObject = new JsDatePick({
-      useMode:1,
-      isStripped:true,
-      target:"calender"
-    });   
-    
-    g_globalObject.setOnSelectedDelegate(function(){
-      var obj = g_globalObject.getSelectedDay();
-      document.getElementById("calendervalue").value = obj.year+"-"+obj.month+"-"+obj.day;
-    });
-
-      
-    
-  };
-  $("#calButton").click(function(){
-    $("#calender").toggle();
-  });
-  $("#state").change(function() {
-    if ($(this).data('options') == undefined) {
-        /*Taking an array of all options-2 and kind of embedding it on the select1*/
-        $(this).data('options', $('#city option').clone());
-    }
-    var id = $(this).val();
-    var options = $(this).data('options').filter('[id=' + id + ']');
-    $('#city').html(options);
+   showCursor: true,
+   cursorChar: "",
+   attr: null,
+   contentType: 'html'
 });
-  $(document).ready(function(){
-  $('.slider4').bxSlider({
-    slideWidth: 500,
-    minSlides: 2,
-    maxSlides: 3,
-    moveSlides: 1,
-    slideMargin: 0
-  });
-});
-</script>
-</html
+})();
 
+  </script>
+  
+</body>
 
-
-
-
-
-
-
-
-
-
-
-
-
+</html>
