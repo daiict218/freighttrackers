@@ -26,14 +26,15 @@ body{
 	
 fieldset{
 	display: none;
-width: 1000px;
+width: 1200px;
 padding: 80px 80px 80px 40px;
-margin-left: 85px;
+margin-left: 17px;
 border-radius: 5px;
 box-shadow: 3px 3px 25px 1px #808080;
 z-index: 2;
 margin-top: 100px;
 	}
+
 
 #first{
     display: block;
@@ -121,24 +122,11 @@ li{
 
 #map-canvas { 
   height: 900px; 
-  width: 950px; 
-  position:absolute; 
-  top: 37; 
-  left: 0; 
-  margin-top: 40px;
+  width: 900px; 
+  position:relative;  
   
-  margin-left: 675px;
-  z-index: 0; /* Set z-index to 0 as it will be on a layer below the contact form */
 }
-.mapspace{ 
-  height: 1000px; 
-  width: 1000px; 
-  position:absolute; 
-  top: 50; 
-  left: 0; 
-  margin-left: 600px;
-  z-index: 0; /* Set z-index to 0 as it will be on a layer below the contact form */
-}
+
 #map-canvas1 { 
   height:1000px; 
   width:950px;  
@@ -329,7 +317,8 @@ height: 500px;
     color: #F5FAFF;
     font-size: 20px;
     background-color:#C33B3B;
-    width: 635px;
+  
+    border-radius: 100px;
 }
 .list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
     z-index: 2;
@@ -436,6 +425,8 @@ a:focus, a:hover{
 }
 .height .form-control{
 	height: 48px !important;
+  width: 250px !important;
+  margin-left: :10px;
 }
 .navbar__menu--logo:hover {
     position: absolute;
